@@ -132,6 +132,8 @@ public class NavModel {
         StopCounting = false;
 
         String dayofWeek[];
+        String startWeekString,stopWeekString;
+
         dayofWeek = new String[8];
         dayofWeek[0] = rMain.getString(R.string.week_2);
         dayofWeek[1] = rMain.getString(R.string.sun_2);
@@ -141,6 +143,7 @@ public class NavModel {
         dayofWeek[5] = rMain.getString(R.string.thu_2);
         dayofWeek[6] = rMain.getString(R.string.fri_2);
         dayofWeek[7] = rMain.getString(R.string.sat_2);
+
         for (int Weekday=0;Weekday<=7;Weekday++) {
 
             dateHolder[0][Weekday].setTextColor(SettingsActivity.textColor);
@@ -159,12 +162,6 @@ public class NavModel {
 
             navWeek[Week].setOrientation(LinearLayout.HORIZONTAL);
 
-            weekHolder[Week].setTextColor(SettingsActivity.textColor);
-            weekHolder[Week].setBackgroundColor(SettingsActivity.backColor);
-            weekHolder[Week].setGravity(Gravity.CENTER);
-            weekHolder[Week].setText(String.valueOf(navMonthCalendar.get(Calendar.WEEK_OF_YEAR) + (Week - 1)));
-            weekHolder[Week].setTypeface(null, Typeface.BOLD);
-
             navWeek[Week].addView(weekHolder[Week], navHolderParams);
 
             for (int Weekday=1;Weekday<=7;Weekday++) {
@@ -173,7 +170,6 @@ public class NavModel {
                 dateHolder[Week][Weekday].setBackgroundColor(SettingsActivity.backColor);
                 dateHolder[Week][Weekday].setGravity(Gravity.CENTER);
                 navWeek[Week].addView(dateHolder[Week][Weekday], navHolderParams);
-                //dateHolder[Week][Weekday].setText(String.valueOf(date));
 
                 if (!StartCounting&&( (MaxDate) == Weekday ) ) {
                     StartCounting=true;
@@ -183,7 +179,23 @@ public class NavModel {
                     if (date == navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)) StopCounting = true;
                     dateHolder[Week][Weekday].setText(String.valueOf(date));
                     date++;
-                }
+                } else dateHolder[Week][Weekday].setText("");
+
+
+
+               // if (dateString.length()>0) weekHolder[Week].setText(String.valueOf(navMonthCalendar.get(Calendar.WEEK_OF_YEAR) + (Week - 1)));
+               // else weekHolder[Week].setText("");
+                weekHolder[Week].setTextColor(SettingsActivity.textColor);
+                weekHolder[Week].setBackgroundColor(SettingsActivity.backColor);
+                weekHolder[Week].setGravity(Gravity.CENTER);
+                weekHolder[Week].setTypeface(null, Typeface.BOLD);
+
+                startWeekString = dateHolder[Week][1].getText().toString();
+                stopWeekString = dateHolder[Week][7].getText().toString();
+                if ( (startWeekString.length()>0) || (stopWeekString.length()>0) ) { weekHolder[Week].setText(String.valueOf(navMonthCalendar.get(Calendar.WEEK_OF_YEAR) + (Week - 1)));
+                } //if (dateString.length()>0)
+                else weekHolder[Week].setText("");
+
 
             } //for (Weekday=1;Weekday<=7;Week+)
 
@@ -218,7 +230,6 @@ public class NavModel {
         //yearHolder.setText("hello");
         topYearRow.addView(yearHolder,topYearParams);
         navYearBox.addView(topYearRow, navYearParams);
-
 
         String[] monthOfYear;
         monthOfYear = new String[12];
@@ -287,5 +298,49 @@ public class NavModel {
 
     } //public void drawBox()
 
+
+    public void reDrawMonth(int getMonth){
+
+        boolean StartCounting;
+        boolean StopCounting;
+
+        navMonthCalendar.set(navMonthCalendar.get(Calendar.YEAR), getMonth, 1);
+
+        String startWeekString, stopWeekString;
+
+        int date = 1;
+        StartCounting = false;
+        StopCounting = false;
+
+        int MaxDate;
+        MaxDate = navMonthCalendar.get(Calendar.DAY_OF_WEEK);
+
+        for (int Week = 1; Week <= 6; Week++){
+
+            navWeek[Week].setOrientation(LinearLayout.HORIZONTAL);
+            for (int Weekday=1;Weekday<=7;Weekday++) {
+                if (!StartCounting&&( (MaxDate) == Weekday ) ) {
+                    StartCounting=true;
+                } //if (!StartCounting&&( (navMonthCalendar.get(Calendar.DAY_OF_WEEK)) == Weekday ) )
+
+                if ( (StartCounting)&&(!StopCounting) ) {
+                    if (date == navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)) StopCounting = true;
+                    dateHolder[Week][Weekday].setText(String.valueOf(date));
+                    date++;
+                } else dateHolder[Week][Weekday].setText("");
+
+                startWeekString = dateHolder[Week][1].getText().toString();
+                stopWeekString = dateHolder[Week][7].getText().toString();
+                if ( (startWeekString.length()>0) || (stopWeekString.length()>0) )weekHolder[Week].setText(String.valueOf(navMonthCalendar.get(Calendar.WEEK_OF_YEAR) + (Week - 1)));
+                   else weekHolder[Week].setText("");
+
+            } //for (Weekday=1;Weekday<=7;Week+)
+
+
+        }//for (Week=1;Week<=6;Week++)
+
+
+
+    }//
 
 } //public class NavMonth

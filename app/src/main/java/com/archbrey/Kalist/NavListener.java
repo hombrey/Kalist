@@ -25,6 +25,7 @@ public class NavListener {
     private static int weeksHeight;
     private static int weeksWidth;
     private static int weeksLeftBoundary;
+    public static int navMaxWeek;
     private static class WeeksMap {
         int X;
         int Y;
@@ -82,6 +83,7 @@ public class NavListener {
                                 determineTouchMode(currentX, currentY);
                                 break;
                             case (MotionEvent.ACTION_UP):
+                                if (touchMode==MONTHMODE) refreshNavPadLocations();
                                 touchMode = 0;
                                 break;
                         }//switch(action)
@@ -97,7 +99,7 @@ public class NavListener {
         switch (touchMode) {
             case MONTHMODE:
                 CalActivity.topOutHandle.showMonth();
-
+                CalActivity.navHandle.reDrawMonth(NavID);
                 break;
             case WEEKMODE:
                 CalActivity.topOutHandle.showWeek();
@@ -131,13 +133,13 @@ public class NavListener {
                 } //for (int monthInc = 0; monthInc <= 11; monthInc++)
                 break;
             case WEEKMODE:
-                for (int weekInc = 1; weekInc <= 6; weekInc++) {
+                for (int weekInc = 1; weekInc <= navMaxWeek; weekInc++) {
 
                     if( ( TouchX >= weeksMap[weekInc].X) && (TouchX < (weeksMap[weekInc].X+weeksWidth) ) )
                         if( ( TouchY >= weeksMap[weekInc].Y) && (TouchY < (weeksMap[weekInc].Y+weeksHeight) ) )
                         {
                             stringValue = NavModel.weekHolder[weekInc].getText().toString();
-                            NavID = Integer.parseInt(stringValue);
+                            if (stringValue.length()>0) NavID = Integer.parseInt(stringValue);
                         }
 
                     TopOut.dateInfo.setText(String.valueOf(NavID));
@@ -213,16 +215,21 @@ public class NavListener {
         //get Weeks
         weeksWidth = NavModel.weekHolder[1].getWidth(); //it's enough to get the first instance of a holder to represent all the rest
         weeksHeight = NavModel.weekHolder[1].getHeight();
+        navMaxWeek = 1;
         for (int weekInc = 1; weekInc <= 6; weekInc++) {
-            weeksMap[weekInc] = new WeeksMap();
-            NavModel.weekHolder[weekInc].getLocationOnScreen(instanceLocation);
-            weeksMap[weekInc].X = instanceLocation[0];
-            weeksMap[weekInc].Y = instanceLocation[1];
-            //stringValue = NavModel.weekHolder[weekInc].getText().toString();
-            //weeksMap[weekInc].value = Integer.parseInt(stringValue);
+            stringValue = NavModel.weekHolder[weekInc].getText().toString();
+            if (stringValue.length()>0) {
+                weeksMap[weekInc] = new WeeksMap();
+                NavModel.weekHolder[weekInc].getLocationOnScreen(instanceLocation);
+                weeksMap[weekInc].X = instanceLocation[0];
+                weeksMap[weekInc].Y = instanceLocation[1];
+                navMaxWeek = weekInc;
+            } //if (stringValue.length()>0)
         } //for (int monthInc=1; monthInc<=12; monthInc++)
+
         weeksLeftBoundary = weeksMap[1].X; //location of any week instance is the left boundary for "weeks" zone
         datesLeftBoundary = weeksMap[1].X + weeksWidth; //right side of weeks zone is the left boundary of "days" zone
+
 
          } // if (monthsWidth < 0)
 
