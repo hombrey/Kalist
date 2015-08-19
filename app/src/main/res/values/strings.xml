@@ -33,4 +33,18 @@
     <string name="oct_2">OCT</string>
     <string name="nov_2">NOV</string>
     <string name="dec_2">DEC</string>
+
+    <string name="fullJanStr">January</string>
+    <string name="fullFebStr">February</string>
+    <string name="fullMarStr">March</string>
+    <string name="fullAprStr">April</string>
+    <string name="fullMayStr">May</string>
+    <string name="fullJunStr">June</string>
+    <string name="fullJulStr">July</string>
+    <string name="fullAugStr">August</string>
+    <string name="fullSepStr">September</string>
+    <string name="fullOctStr">October</string>
+    <string name="fullNovStr">November</string>
+    <string name="fullDecStr">December</string>
+
 </resources>

@@ -2,32 +2,32 @@
 <items version="2" >
 
     <item
-        jar="/home/archbrey/AndroidStudioProjects/Kalist/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/classes.jar"
+        jar="/home/archbrey/AndroidStudioProjects/KliCal/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/libs/internal_impl-22.2.0.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
-        <dex dex="/home/archbrey/AndroidStudioProjects/Kalist/app/build/intermediates/pre-dexed/debug/classes-a47356a3d2594b8c679eb85349bc59b82850a685.jar" />
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="/home/archbrey/AndroidStudioProjects/KliCal/app/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-fb899781173033f3b5c1c41560f2794c2bfbfe59.jar" />
+    </item>
+    <item
+        jar="/home/archbrey/AndroidStudioProjects/KliCal/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="/home/archbrey/AndroidStudioProjects/KliCal/app/build/intermediates/pre-dexed/debug/classes-a1450e981e2fa1d50aa77835016bdb15d0ed7bcd.jar" />
     </item>
     <item
         jar="/home/archbrey/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/22.2.0/support-annotations-22.2.0.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
-        <dex dex="/home/archbrey/AndroidStudioProjects/Kalist/app/build/intermediates/pre-dexed/debug/support-annotations-22.2.0-d0481d76dade28b0544c7fbaee1fc1be1a6f2b2d.jar" />
+        <dex dex="/home/archbrey/AndroidStudioProjects/KliCal/app/build/intermediates/pre-dexed/debug/support-annotations-22.2.0-d0481d76dade28b0544c7fbaee1fc1be1a6f2b2d.jar" />
     </item>
     <item
-        jar="/home/archbrey/AndroidStudioProjects/Kalist/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/libs/internal_impl-22.2.0.jar"
+        jar="/home/archbrey/AndroidStudioProjects/KliCal/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
-        <dex dex="/home/archbrey/AndroidStudioProjects/Kalist/app/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-5f759602a046cb020f792d6b3a2008398cee15fa.jar" />
-    </item>
-    <item
-        jar="/home/archbrey/AndroidStudioProjects/Kalist/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/jars/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
-        <dex dex="/home/archbrey/AndroidStudioProjects/Kalist/app/build/intermediates/pre-dexed/debug/classes-63c543e6952f1cc80560546b31569722c7651e54.jar" />
+        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
+        <dex dex="/home/archbrey/AndroidStudioProjects/KliCal/app/build/intermediates/pre-dexed/debug/classes-b6fb71226cff5bb322d8e3dcbf8b67d46bcdecd4.jar" />
     </item>
 
 </items>

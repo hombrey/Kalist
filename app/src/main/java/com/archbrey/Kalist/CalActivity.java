@@ -1,4 +1,4 @@
-package com.archbrey.kalist;
+package com.archbrey.Kalist;
 
 import android.app.Activity;
 import android.content.Context;

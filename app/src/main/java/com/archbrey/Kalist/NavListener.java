@@ -1,4 +1,4 @@
-package com.archbrey.kalist;
+package com.archbrey.Kalist;
 
 import android.support.v4.view.MotionEventCompat;
 import android.view.MotionEvent;
@@ -7,7 +7,7 @@ import android.view.View;
 public class NavListener {
 
     private static int yearHeight;
-    private static int yearWidth;
+    public static int yearWidth;
     private static class YearMap {
         int X;
         int Y;
@@ -26,7 +26,6 @@ public class NavListener {
     private static int weeksWidth;
     private static int weeksLeftBoundary;
     private static class WeeksMap {
-        Integer value;
         int X;
         int Y;
     } //private static class WeeksMap
@@ -48,7 +47,6 @@ public class NavListener {
     public final int MONTHMODE = 101;
     public final int WEEKMODE = 102;
     public final int DATEMODE = 103;
-
 
     public static int NavID;
 
@@ -72,7 +70,10 @@ public class NavListener {
                     public boolean onTouch(View v, MotionEvent event) {
                         float currentX = event.getRawX();
                         float currentY = event.getRawY();
-                        if (touchMode>0) determineNavID(currentX, currentY);
+                        if (touchMode>0) {
+                            determineNavID(currentX, currentY);
+                            evaluateAction();
+                        } //if (touchMode>0)
                         int action = MotionEventCompat.getActionMasked(event);
                         switch (action) {
                             case (MotionEvent.ACTION_DOWN):
@@ -91,11 +92,33 @@ public class NavListener {
 
     } //public void setListener()
 
+    private void evaluateAction(){
+
+        switch (touchMode) {
+            case MONTHMODE:
+                CalActivity.topOutHandle.showMonth();
+
+                break;
+            case WEEKMODE:
+                CalActivity.topOutHandle.showWeek();
+                break;
+            case DATEMODE:
+                CalActivity.topOutHandle.showDate();
+                break;
+            case YEARMODE:
+                break;
+            default:
+                break;
+        } //switch (touchMode)
+    } // private void evaluateAction()
+
+
     private void determineNavID(float getX, float getY){
 
         int TouchX=(int)getX;
         int TouchY=(int)getY;
 
+        String stringValue;
         switch (touchMode) {
             case MONTHMODE:
                 for (int monthInc = 0; monthInc <= 11; monthInc++) {
@@ -112,7 +135,10 @@ public class NavListener {
 
                     if( ( TouchX >= weeksMap[weekInc].X) && (TouchX < (weeksMap[weekInc].X+weeksWidth) ) )
                         if( ( TouchY >= weeksMap[weekInc].Y) && (TouchY < (weeksMap[weekInc].Y+weeksHeight) ) )
-                        {NavID=weekInc; }
+                        {
+                            stringValue = NavModel.weekHolder[weekInc].getText().toString();
+                            NavID = Integer.parseInt(stringValue);
+                        }
 
                     TopOut.dateInfo.setText(String.valueOf(NavID));
                 } //for (int monthInc = 0; monthInc <= 11; monthInc++)
@@ -134,8 +160,6 @@ public class NavListener {
         } //switch (touchMode)
 
     } //private void determineNavId(float getX, float getY)
-
-
 
 
     private void determineTouchMode(float getX, float getY){

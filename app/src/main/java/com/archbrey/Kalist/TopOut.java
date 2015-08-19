@@ -1,13 +1,16 @@
-package com.archbrey.kalist;
+package com.archbrey.Kalist;
 
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.Calendar;
 
 public class TopOut {
 
     public static RelativeLayout topOutBox;
     public static TextView dateInfo;
     public static TextView dayInfo;
+
 
 
     public TopOut(){
@@ -48,5 +51,27 @@ public class TopOut {
         topOutBox.addView(dayInfo, dayInfoParams);
 
     }//public void DrawBox()
+
+    public void showMonth(){
+        TopOut.dateInfo.setText(NavModel.fullMonthStr[NavListener.NavID]);
+    }//public void showMonth()
+
+    public void showWeek(){
+        TopOut.dateInfo.setText("Week " + String.valueOf(NavListener.NavID));
+    }//public void showWeek()
+
+    public void showDate(){
+        String getMonth;
+        String getYear;
+        String getDate;
+
+        getMonth =NavModel.fullMonthStr[NavModel.navMonthCalendar.get(Calendar.MONTH)];
+        getYear = String.valueOf(NavModel.navMonthCalendar.get(Calendar.YEAR));
+        getDate = String.valueOf(NavListener.NavID);
+
+        TopOut.dateInfo.setText(getMonth+" "+getDate+", "+getYear);
+
+
+    }//public void showWeek()
 
 } //public class TopOut

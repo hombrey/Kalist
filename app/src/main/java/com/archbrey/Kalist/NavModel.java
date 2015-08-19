@@ -1,4 +1,4 @@
-package com.archbrey.kalist;
+package com.archbrey.Kalist;
 
 
 import android.content.Context;
@@ -34,7 +34,7 @@ public class NavModel {
 
     public static Calendar navMonthCalendar;
 
-
+    public static String fullMonthStr[];
 
     public NavModel(){
 
@@ -79,7 +79,21 @@ public class NavModel {
 
         }//for (Week=0;Week<=7;Week++)
 
-    }// public NavMonth()
+        fullMonthStr = new String[12];
+        fullMonthStr[0] = rMain.getString(R.string.fullJanStr);
+        fullMonthStr[1] = rMain.getString(R.string.fullFebStr);
+        fullMonthStr[2] = rMain.getString(R.string.fullMarStr);
+        fullMonthStr[3] = rMain.getString(R.string.fullAprStr);
+        fullMonthStr[4] = rMain.getString(R.string.fullMayStr);
+        fullMonthStr[5] = rMain.getString(R.string.fullJunStr);
+        fullMonthStr[6] = rMain.getString(R.string.fullJulStr);
+        fullMonthStr[7] = rMain.getString(R.string.fullAugStr);
+        fullMonthStr[8] = rMain.getString(R.string.fullSepStr);
+        fullMonthStr[9] = rMain.getString(R.string.fullOctStr);
+        fullMonthStr[10] = rMain.getString(R.string.fullNovStr);
+        fullMonthStr[11] = rMain.getString(R.string.fullDecStr);
+
+    }// public NavModel()
 
     public void drawBox(){
 
