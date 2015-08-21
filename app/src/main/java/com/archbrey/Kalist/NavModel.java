@@ -31,8 +31,14 @@ public class NavModel {
     public static LinearLayout topYearRow;
     public static RelativeLayout navBox;
 
+    public static RelativeLayout topOutBox;
+    public static RelativeLayout.LayoutParams topOutBoxParams;
+    public static TextView dateInfo;
+
 
     public static Calendar navMonthCalendar;
+    public static int currentYear;
+    public static int currentMonth;
 
     public static String fullMonthStr[];
 
@@ -55,6 +61,9 @@ public class NavModel {
 
         topYearRow = new LinearLayout(mainContext);
         yearHolder = new TextView(mainContext);
+
+        topOutBox = new RelativeLayout(CalActivity.c);
+        dateInfo = new TextView(CalActivity.c);
 
         for (int incMonth=0;incMonth<=11;incMonth++){
             monthHolder[incMonth] = new TextView(mainContext);
@@ -107,7 +116,9 @@ public class NavModel {
 
         //set default view by showing current month
         navMonthCalendar.getTime();
-        navMonthCalendar.set(navMonthCalendar.get(Calendar.YEAR), navMonthCalendar.get(Calendar.MONTH), 1);
+        currentYear = navMonthCalendar.get(Calendar.YEAR);
+        currentMonth = navMonthCalendar.get(Calendar.MONTH);
+        navMonthCalendar.set(currentYear, currentMonth , 1);
 
         //---------- NAV MONTH ----------------------------------------------------------------------------------------------------------------------
 
@@ -121,7 +132,7 @@ public class NavModel {
                 keypad_key_width,
                 keypad_key_height);
         navHolderParams.setMargins(0,0,0,0);
-        navHolderParams.weight=0.1f;
+        navHolderParams.weight=0.11f;
 
 
         boolean StartCounting;
@@ -186,7 +197,7 @@ public class NavModel {
                // if (dateString.length()>0) weekHolder[Week].setText(String.valueOf(navMonthCalendar.get(Calendar.WEEK_OF_YEAR) + (Week - 1)));
                // else weekHolder[Week].setText("");
                 weekHolder[Week].setTextColor(SettingsActivity.textColor);
-                weekHolder[Week].setBackgroundColor(SettingsActivity.backColor);
+                weekHolder[Week].setBackgroundColor(SettingsActivity.backerColor);
                 weekHolder[Week].setGravity(Gravity.CENTER);
                 weekHolder[Week].setTypeface(null, Typeface.BOLD);
 
@@ -203,33 +214,45 @@ public class NavModel {
 
         }//for (Week=1;Week<=6;Week++)
 
-        //---------- NAV YEAR ----------------------------------------------------------------------------------------------------------------------
-        navYearBox.setOrientation(LinearLayout.VERTICAL);
+        //---------- Year Display ----------------------------------------------------------------------------------------------------------------------
 
+        int yearTextSize = 18;
+
+        yearHolder.setTextSize(TypedValue.COMPLEX_UNIT_SP, yearTextSize);
+        yearHolder.setTextColor(SettingsActivity.textColor);
+        yearHolder.setBackgroundColor(SettingsActivity.backerColor);
+        yearHolder.setGravity(Gravity.CENTER);
+        //currentYear = navMonthCalendar.get(Calendar.YEAR);
+        // yearHolder.setText("<- " + String.valueOf(navMonthCalendar.get(Calendar.YEAR)) + " ->");
+        yearHolder.setText("<- " + String.valueOf(currentYear) + " ->");
+
+        navYearBox.setOrientation(LinearLayout.VERTICAL);
 
         LinearLayout.LayoutParams navYearParams = new LinearLayout.LayoutParams (
                 LinearLayout.LayoutParams.MATCH_PARENT, //width
                 LinearLayout.LayoutParams.WRAP_CONTENT); //height
 
+
         LinearLayout.LayoutParams topYearParams = new LinearLayout.LayoutParams (
                 keypad_key_width,
                 keypad_key_height);
-        topYearParams.setMargins(0,0,0,0);
+        topYearParams.setMargins(0, 0, 0, 0);
         topYearParams.weight=0.1f;
+
+
+        topYearRow.addView(yearHolder, topYearParams);
+
+
+        //---------- NAV Year ----------------------------------------------------------------------------------------------------------------------
+
 
         LinearLayout.LayoutParams navMonthParams = new LinearLayout.LayoutParams (
                 keypad_key_width,
                 keypad_key_height);
-        navMonthParams.setMargins(0,0,0,0);
+        navMonthParams.setMargins(0, 0, 0, 0);
         navMonthParams.weight=0.1f;
 
-        yearHolder.setTextColor(SettingsActivity.textColor);
-        yearHolder.setBackgroundColor(SettingsActivity.backerColor);
-        yearHolder.setGravity(Gravity.CENTER);
-        yearHolder.setText(String.valueOf(navMonthCalendar.get(Calendar.YEAR)));
-        //yearHolder.setText("hello");
-        topYearRow.addView(yearHolder,topYearParams);
-        navYearBox.addView(topYearRow, navYearParams);
+
 
         String[] monthOfYear;
         monthOfYear = new String[12];
@@ -260,19 +283,45 @@ public class NavModel {
 
         }
 
+        navYearBox.addView(topYearRow, navYearParams);
+
         for (int incRow=0;incRow<=5;incRow++) {
             navYearBox.addView(navYearRow[incRow], navYearParams);
         }
 
+// ------- Top Nav Info ---------------------------------------------------------------------------------
+
+        int dateTextSize = 20;
+
+        //dateInfo.setGravity(Gravity.LEFT);
+        dateInfo.setText("date");
+        dateInfo.setTextColor(SettingsActivity.textColor);
+        dateInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, dateTextSize);
+
+        dateInfo.setId(R.id.dateInfo);
+
+        RelativeLayout.LayoutParams dateInfoParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        dateInfoParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        dateInfoParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+
+        topOutBox.setBackgroundColor(SettingsActivity.backerColor);
+        topOutBox.addView(dateInfo, dateInfoParams);
+
 // ------- assemble navBox ---------------------------------------------------------------------------------
+
 
         int screenWidth;
         Display display = CalActivity.mainActivity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         screenWidth = size.x;
+
         navMonthBox.setId(R.id.navMonthBox);
         navYearBox.setId(R.id.navYearBox);
+        topOutBox.setId(R.id.topOutBox);
+        navBox.setId(R.id.navBox);
 
         int navMonthSpace;
         float computeNavSpace;
@@ -285,6 +334,7 @@ public class NavModel {
                 RelativeLayout.LayoutParams.WRAP_CONTENT); //height
         monthBoxParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         monthBoxParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        //monthBoxParams.addRule(RelativeLayout.RIGHT_OF, navYearBox.getId());
 
         RelativeLayout.LayoutParams yearBoxParams = new RelativeLayout.LayoutParams(
                 //RelativeLayout.LayoutParams.WRAP_CONTENT, //width
@@ -293,10 +343,31 @@ public class NavModel {
         yearBoxParams.addRule(RelativeLayout.LEFT_OF, navMonthBox.getId());
         yearBoxParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
+
+        topOutBoxParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, //width
+                RelativeLayout.LayoutParams.WRAP_CONTENT); //height
+        topOutBoxParams.addRule(RelativeLayout.ABOVE, navMonthBox.getId());
+
+
+        navBox.setGravity(Gravity.BOTTOM);
+
         navBox.addView(navMonthBox, monthBoxParams);
         navBox.addView(navYearBox, yearBoxParams);
+        //CalActivity.mainScreen.addView(NavModel.topOutBox, NavModel.topOutBoxParams);
+        navBox.addView(NavModel.topOutBox, NavModel.topOutBoxParams);
 
     } //public void drawBox()
+
+    public void reDrawYear(int getYear){
+
+        currentYear = getYear;
+        //currentMonth = navMonthCalendar.get(Calendar.MONTH);
+        //navMonthCalendar.set(currentYear, currentMonth, 1);
+        reDrawMonth(currentMonth);
+        showMonth(currentMonth);
+
+    } //public void reDrawYear(int getYear)
 
 
     public void reDrawMonth(int getMonth){
@@ -304,7 +375,8 @@ public class NavModel {
         boolean StartCounting;
         boolean StopCounting;
 
-        navMonthCalendar.set(navMonthCalendar.get(Calendar.YEAR), getMonth, 1);
+        currentMonth = getMonth;
+        navMonthCalendar.set(currentYear, currentMonth, 1);
 
         String startWeekString, stopWeekString;
 
@@ -339,8 +411,33 @@ public class NavModel {
 
         }//for (Week=1;Week<=6;Week++)
 
+    }// public void reDrawMonth(int getMonth)
 
 
-    }//
+    public void showMonth(int getMonth){
+        dateInfo.setText(NavModel.fullMonthStr[getMonth]);
+    }//public void showMonth()
+
+    public void showWeek(int getWeek){
+        dateInfo.setText("Week " + String.valueOf(getWeek));
+    }//public void showWeek()
+
+    public void showDate(int getDate){
+        String sMonth;
+        String sYear;
+        String sDate;
+
+       // sMonth =NavModel.fullMonthStr[NavModel.navMonthCalendar.get(Calendar.MONTH)];
+       // sYear = String.valueOf(NavModel.navMonthCalendar.get(Calendar.YEAR));
+       // sDate = String.valueOf(NavListener.NavID);
+        sYear = String.valueOf(currentYear);
+        sMonth = NavModel.fullMonthStr[currentMonth];
+        sDate = String.valueOf(getDate);
+
+        dateInfo.setText(sMonth+" "+sDate+", "+sYear);
+
+    }//public void showWeek()
+
+
 
 } //public class NavMonth

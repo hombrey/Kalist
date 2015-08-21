@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 
 public class CalActivity extends Activity {
 
-    RelativeLayout mainScreen;
+    public static RelativeLayout mainScreen;
 
     public static Resources r;
     public static Context c;
@@ -21,9 +21,6 @@ public class CalActivity extends Activity {
 
     public static NavModel navHandle;
     public static NavListener navListener;
-
-    public static TopOut topOutHandle;
-
 
 
     @Override
@@ -35,6 +32,7 @@ public class CalActivity extends Activity {
 
         AutoRescaleFonts();
         getPreferences();
+
 
         drawBoxes();
         assembleVertical();
@@ -58,17 +56,12 @@ public class CalActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-
-
     } //protected void onResume()
 
     private void drawBoxes(){
 
         navHandle = new NavModel();
         navHandle.drawBox();
-
-        topOutHandle = new TopOut();
-        topOutHandle.drawBox();
 
     } //private void drawBoxes()
 
@@ -81,17 +74,17 @@ public class CalActivity extends Activity {
                 RelativeLayout.LayoutParams.WRAP_CONTENT, //width
                 RelativeLayout.LayoutParams.WRAP_CONTENT); //height
         //RelativeLayout.LayoutParams.MATCH_PARENT); //height
-        navBoxParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        //navBoxParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         navBoxParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
         RelativeLayout.LayoutParams topOutBoxParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT, //width
                 RelativeLayout.LayoutParams.WRAP_CONTENT); //height
-        //RelativeLayout.LayoutParams.MATCH_PARENT); //height
-        topOutBoxParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        topOutBoxParams.addRule(RelativeLayout.ABOVE, NavModel.navBox.getId());
+
 
         mainScreen.addView(NavModel.navBox, navBoxParams);
-        mainScreen.addView(TopOut.topOutBox, topOutBoxParams);
+
 
     } //private void assembleVertical()
 

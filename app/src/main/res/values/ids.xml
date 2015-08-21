@@ -3,6 +3,7 @@
     <item type="id" name="navYearBox" />
     <item type="id" name="navMonthBox" />
     <item type="id" name="topOutBox" />
+    <item type="id" name="navBox" />
 
     <item type="id" name="dayInfo" />
     <item type="id" name="dateInfo" />

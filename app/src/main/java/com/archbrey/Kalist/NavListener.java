@@ -44,12 +44,15 @@ public class NavListener {
     private static YearMap yearMap;
 
     public static int touchMode;
-    public final int YEARMODE =100;
-    public final int MONTHMODE = 101;
-    public final int WEEKMODE = 102;
-    public final int DATEMODE = 103;
+    public final int DATEMODE = 100;
+    public final int WEEKMODE = 101;
+    public final int MONTHMODE = 102;
+    public final int YEARMODE =103;
 
     public static int NavID;
+
+    private float initialTouchX;
+    private float initialTouchY;
 
     public NavListener() {
 
@@ -78,12 +81,15 @@ public class NavListener {
                         int action = MotionEventCompat.getActionMasked(event);
                         switch (action) {
                             case (MotionEvent.ACTION_DOWN):
+                                initialTouchX = currentX;
+                                initialTouchY = currentY;
                                 touchMode = 1;
                                 if (monthsWidth < 1) refreshNavPadLocations(); //only perform one time
                                 determineTouchMode(currentX, currentY);
                                 break;
                             case (MotionEvent.ACTION_UP):
-                                if (touchMode==MONTHMODE) refreshNavPadLocations();
+                                if (touchMode==YEARMODE) CalActivity.navHandle.reDrawYear(NavModel.currentYear+NavID);
+                                if (touchMode>=MONTHMODE) refreshNavPadLocations();
                                 touchMode = 0;
                                 break;
                         }//switch(action)
@@ -98,16 +104,17 @@ public class NavListener {
 
         switch (touchMode) {
             case MONTHMODE:
-                CalActivity.topOutHandle.showMonth();
+                CalActivity.navHandle.showMonth(NavID);
                 CalActivity.navHandle.reDrawMonth(NavID);
                 break;
             case WEEKMODE:
-                CalActivity.topOutHandle.showWeek();
+                CalActivity.navHandle.showWeek(NavID);
                 break;
             case DATEMODE:
-                CalActivity.topOutHandle.showDate();
+                CalActivity.navHandle.showDate(NavID);
                 break;
             case YEARMODE:
+                NavModel.yearHolder.setText("<- " + String.valueOf(NavModel.currentYear+NavID) + " ->");
                 break;
             default:
                 break;
@@ -129,7 +136,6 @@ public class NavListener {
                         if( ( TouchY >= monthsMap[monthInc].Y) && (TouchY < (monthsMap[monthInc].Y+monthsHeight) ) )
                         {NavID=monthInc; }
 
-                     TopOut.dateInfo.setText(String.valueOf(NavID));
                 } //for (int monthInc = 0; monthInc <= 11; monthInc++)
                 break;
             case WEEKMODE:
@@ -142,7 +148,6 @@ public class NavListener {
                             if (stringValue.length()>0) NavID = Integer.parseInt(stringValue);
                         }
 
-                    TopOut.dateInfo.setText(String.valueOf(NavID));
                 } //for (int monthInc = 0; monthInc <= 11; monthInc++)
                 break;
             case DATEMODE:
@@ -152,10 +157,10 @@ public class NavListener {
                         if( ( TouchY >= datesMap[dateInc].Y) && (TouchY < (datesMap[dateInc].Y+datesHeight) ) )
                         {NavID=dateInc; }
 
-                    TopOut.dateInfo.setText(String.valueOf(NavID));
                 } //for (int monthInc = 0; monthInc <= 11; monthInc++)
                 break;
             case YEARMODE:
+                yearFling(getX);
                 break;
             default:
                 break;
@@ -163,25 +168,41 @@ public class NavListener {
 
     } //private void determineNavId(float getX, float getY)
 
+    public void yearFling(float getCurrentX){
+
+        float movementX;
+        movementX = (getCurrentX - initialTouchX)/yearWidth;
+
+        NavID = 0;
+        if(movementX>0.25) NavID = 1;
+        if(movementX<-0.25) NavID = -1;
+
+    } //public void yearFling(float currentX)
+
+
 
     private void determineTouchMode(float getX, float getY){
 
         int IntTouchX=(int)getX;
         int IntTouchY=(int)getY;
 
-        if ( (IntTouchY>yearMap.Y) && (IntTouchY<(monthsMap[11].Y+monthsHeight)) ){ //within navpad region
+        if ( (IntTouchY>yearMap.Y+yearHeight) && (IntTouchY<(monthsMap[11].Y+monthsHeight)) ){ //within lower navpad region
 
             if (IntTouchX > datesLeftBoundary) touchMode = DATEMODE;
             if ((IntTouchX < datesLeftBoundary) && (IntTouchX > weeksLeftBoundary))
                 touchMode = WEEKMODE;
             if ((IntTouchX < weeksLeftBoundary) && (IntTouchY > (yearMap.Y + yearHeight)))
                 touchMode = MONTHMODE;
-            if ((IntTouchX < weeksLeftBoundary) && (IntTouchY < (yearMap.Y + yearHeight)))
-                touchMode = YEARMODE;
-
-            TopOut.dateInfo.setText(String.valueOf(touchMode));
 
         } //if (IntTouchY>yearMap.Y)
+
+        if ( (IntTouchY<yearMap.Y+yearHeight)  ){ //within header navpad region
+
+            if (IntTouchX < weeksLeftBoundary)
+                touchMode = YEARMODE;
+
+        } //if (IntTouchY>yearMap.Y)
+
 
     } //private void determineMode()
 
