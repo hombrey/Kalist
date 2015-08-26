@@ -18,9 +18,10 @@ android {
             proguardFile '/home/archbrey/AndroidStudioProjects/Kalist/proguard-android.txt'
         }
         debug {
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources true
             proguardFile '/home/archbrey/AndroidStudioProjects/Kalist/proguard-android.txt'
+            renderscriptDebuggable false
         }
     }
     productFlavors {

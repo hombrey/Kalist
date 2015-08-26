@@ -9,7 +9,7 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+//import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -29,10 +29,10 @@ public class NavModel {
     public static LinearLayout navYearBox;
     public static LinearLayout[] navYearRow;
     public static LinearLayout topYearRow;
-    public static RelativeLayout navBox;
+    public static LinearLayout navBox;
+    public static LinearLayout navBoxMain;
 
-    public static RelativeLayout topOutBox;
-    public static RelativeLayout.LayoutParams topOutBoxParams;
+    public static LinearLayout topOutBox;
     public static TextView dateInfo;
 
 
@@ -49,28 +49,29 @@ public class NavModel {
         mainContext = CalActivity.c;
         rMain = CalActivity.r;
 
-        navBox = new RelativeLayout(mainContext);
+        navBox = new LinearLayout(mainContext);
+        navBoxMain = new LinearLayout(mainContext);
         navMonthBox = new LinearLayout(mainContext);
 
         navMonthCalendar = new GregorianCalendar();
         navYearBox = new LinearLayout(mainContext);
 
-        monthHolder = new TextView[12];
 
-        navYearRow = new LinearLayout[6];
+        topOutBox = new LinearLayout(CalActivity.c);
+        dateInfo = new TextView(CalActivity.c);
+
 
         topYearRow = new LinearLayout(mainContext);
         yearHolder = new TextView(mainContext);
-
-        topOutBox = new RelativeLayout(CalActivity.c);
-        dateInfo = new TextView(CalActivity.c);
-
+        monthHolder = new TextView[12];
+        navYearRow = new LinearLayout[6];
         for (int incMonth=0;incMonth<=11;incMonth++){
             monthHolder[incMonth] = new TextView(mainContext);
             float halfValue = incMonth/2;
             int Row = (int) halfValue;
             navYearRow[Row] = new LinearLayout(mainContext);
         }
+
 
         dateHolder =  new TextView[7][8];
         weekHolder = new TextView[7];
@@ -104,6 +105,7 @@ public class NavModel {
 
     }// public NavModel()
 
+
     public void drawBox(){
 
         int keypad_key_width = (int) TypedValue.applyDimension(
@@ -118,10 +120,9 @@ public class NavModel {
         navMonthCalendar.getTime();
         currentYear = navMonthCalendar.get(Calendar.YEAR);
         currentMonth = navMonthCalendar.get(Calendar.MONTH);
-        navMonthCalendar.set(currentYear, currentMonth , 1);
+        navMonthCalendar.set(currentYear, currentMonth, 1);
 
         //---------- NAV MONTH ----------------------------------------------------------------------------------------------------------------------
-
         navMonthBox.setOrientation(LinearLayout.VERTICAL);
 
         LinearLayout.LayoutParams navWeekParams = new LinearLayout.LayoutParams (
@@ -132,8 +133,7 @@ public class NavModel {
                 keypad_key_width,
                 keypad_key_height);
         navHolderParams.setMargins(0,0,0,0);
-        navHolderParams.weight=0.11f;
-
+        navHolderParams.weight=0.1f;
 
         boolean StartCounting;
         boolean StopCounting;
@@ -156,6 +156,7 @@ public class NavModel {
         dayofWeek[7] = rMain.getString(R.string.sat_2);
 
         for (int Weekday=0;Weekday<=7;Weekday++) {
+            navWeek[0].setOrientation(LinearLayout.HORIZONTAL);
 
             dateHolder[0][Weekday].setTextColor(SettingsActivity.textColor);
             dateHolder[0][Weekday].setBackgroundColor(SettingsActivity.backerColor);
@@ -164,7 +165,9 @@ public class NavModel {
             navWeek[0].addView(dateHolder[0][Weekday], navHolderParams);
 
         } //for (int Weekday=0;Weekday<=7;Weekday++)
-        navMonthBox.addView(navWeek[0], navWeekParams);
+
+            navMonthBox.addView(navWeek[0], navWeekParams);
+
 
         int MaxDate;
         MaxDate = navMonthCalendar.get(Calendar.DAY_OF_WEEK);
@@ -192,8 +195,6 @@ public class NavModel {
                     date++;
                 } else dateHolder[Week][Weekday].setText("");
 
-
-
                // if (dateString.length()>0) weekHolder[Week].setText(String.valueOf(navMonthCalendar.get(Calendar.WEEK_OF_YEAR) + (Week - 1)));
                // else weekHolder[Week].setText("");
                 weekHolder[Week].setTextColor(SettingsActivity.textColor);
@@ -214,6 +215,7 @@ public class NavModel {
 
         }//for (Week=1;Week<=6;Week++)
 
+
         //---------- Year Display ----------------------------------------------------------------------------------------------------------------------
 
         int yearTextSize = 18;
@@ -222,8 +224,6 @@ public class NavModel {
         yearHolder.setTextColor(SettingsActivity.textColor);
         yearHolder.setBackgroundColor(SettingsActivity.backerColor);
         yearHolder.setGravity(Gravity.CENTER);
-        //currentYear = navMonthCalendar.get(Calendar.YEAR);
-        // yearHolder.setText("<- " + String.valueOf(navMonthCalendar.get(Calendar.YEAR)) + " ->");
         yearHolder.setText("<- " + String.valueOf(currentYear) + " ->");
 
         navYearBox.setOrientation(LinearLayout.VERTICAL);
@@ -289,28 +289,34 @@ public class NavModel {
             navYearBox.addView(navYearRow[incRow], navYearParams);
         }
 
+
+
 // ------- Top Nav Info ---------------------------------------------------------------------------------
 
         int dateTextSize = 20;
 
-        //dateInfo.setGravity(Gravity.LEFT);
+        //dateInfo.setGravity(Gravity.RIGHT);
         dateInfo.setText("date");
         dateInfo.setTextColor(SettingsActivity.textColor);
         dateInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, dateTextSize);
 
         dateInfo.setId(R.id.dateInfo);
 
-        RelativeLayout.LayoutParams dateInfoParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
-        dateInfoParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        dateInfoParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        LinearLayout.LayoutParams dateInfoParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        topOutBox.setGravity(Gravity.RIGHT);
+
 
         topOutBox.setBackgroundColor(SettingsActivity.backerColor);
         topOutBox.addView(dateInfo, dateInfoParams);
 
 // ------- assemble navBox ---------------------------------------------------------------------------------
 
+        navMonthBox.setId(R.id.navMonthBox);
+        navYearBox.setId(R.id.navYearBox);
+        topOutBox.setId(R.id.topOutBox);
+        navBox.setId(R.id.navBox);
 
         int screenWidth;
         Display display = CalActivity.mainActivity.getWindowManager().getDefaultDisplay();
@@ -318,44 +324,33 @@ public class NavModel {
         display.getSize(size);
         screenWidth = size.x;
 
-        navMonthBox.setId(R.id.navMonthBox);
-        navYearBox.setId(R.id.navYearBox);
-        topOutBox.setId(R.id.topOutBox);
-        navBox.setId(R.id.navBox);
-
         int navMonthSpace;
+        int navYearSpace;
         float computeNavSpace;
         computeNavSpace = screenWidth*0.7f;
         navMonthSpace = (int) computeNavSpace;
+        navYearSpace = screenWidth - navMonthSpace;
 
-        RelativeLayout.LayoutParams monthBoxParams = new RelativeLayout.LayoutParams(
-                //RelativeLayout.LayoutParams.WRAP_CONTENT, //width
-                navMonthSpace,
-                RelativeLayout.LayoutParams.WRAP_CONTENT); //height
-        monthBoxParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        monthBoxParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        //monthBoxParams.addRule(RelativeLayout.RIGHT_OF, navYearBox.getId());
+        LinearLayout.LayoutParams monthBoxParams = new LinearLayout.LayoutParams(
+                navMonthSpace, //width
+                LinearLayout.LayoutParams.WRAP_CONTENT); //height
 
-        RelativeLayout.LayoutParams yearBoxParams = new RelativeLayout.LayoutParams(
-                //RelativeLayout.LayoutParams.WRAP_CONTENT, //width
-                navMonthSpace,
-                RelativeLayout.LayoutParams.WRAP_CONTENT); //height
-        yearBoxParams.addRule(RelativeLayout.LEFT_OF, navMonthBox.getId());
-        yearBoxParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        LinearLayout.LayoutParams yearBoxParams = new LinearLayout.LayoutParams(
+                navYearSpace, //width
+                LinearLayout.LayoutParams.WRAP_CONTENT); //height
 
+        LinearLayout.LayoutParams topOutBoxParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, //width
+                LinearLayout.LayoutParams.WRAP_CONTENT); //height
 
-        topOutBoxParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, //width
-                RelativeLayout.LayoutParams.WRAP_CONTENT); //height
-        topOutBoxParams.addRule(RelativeLayout.ABOVE, navMonthBox.getId());
+        navBoxMain.setOrientation(LinearLayout.HORIZONTAL);
+        navBoxMain.addView(navYearBox, yearBoxParams);
+        navBoxMain.addView(navMonthBox, monthBoxParams);
 
-
-        navBox.setGravity(Gravity.BOTTOM);
-
-        navBox.addView(navMonthBox, monthBoxParams);
-        navBox.addView(navYearBox, yearBoxParams);
-        //CalActivity.mainScreen.addView(NavModel.topOutBox, NavModel.topOutBoxParams);
-        navBox.addView(NavModel.topOutBox, NavModel.topOutBoxParams);
+        navBox.setOrientation(LinearLayout.VERTICAL);
+        navBox.addView(topOutBox, topOutBoxParams);
+        navBox.addView(navBoxMain);
+       // navBox.addView(NavModel.topOutBox, topOutBoxParams);
 
     } //public void drawBox()
 
@@ -427,9 +422,7 @@ public class NavModel {
         String sYear;
         String sDate;
 
-       // sMonth =NavModel.fullMonthStr[NavModel.navMonthCalendar.get(Calendar.MONTH)];
-       // sYear = String.valueOf(NavModel.navMonthCalendar.get(Calendar.YEAR));
-       // sDate = String.valueOf(NavListener.NavID);
+
         sYear = String.valueOf(currentYear);
         sMonth = NavModel.fullMonthStr[currentMonth];
         sDate = String.valueOf(getDate);

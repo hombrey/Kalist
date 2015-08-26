@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
 
+
 public class CalActivity extends Activity {
 
     public static RelativeLayout mainScreen;
@@ -21,6 +22,8 @@ public class CalActivity extends Activity {
 
     public static NavModel navHandle;
     public static NavListener navListener;
+
+    public static ListModel listHandle;
 
 
     @Override
@@ -63,26 +66,31 @@ public class CalActivity extends Activity {
         navHandle = new NavModel();
         navHandle.drawBox();
 
+        listHandle = new ListModel();
+        listHandle.drawBox();
+
+
     } //private void drawBoxes()
 
     private void assembleVertical(){
 
         mainScreen = new RelativeLayout(this);
-        mainScreen.setGravity(Gravity.BOTTOM);
+        //mainScreen.setGravity(Gravity.BOTTOM);
+
 
         RelativeLayout.LayoutParams navBoxParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, //width
-                RelativeLayout.LayoutParams.WRAP_CONTENT); //height
-        //RelativeLayout.LayoutParams.MATCH_PARENT); //height
-        //navBoxParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        navBoxParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-
-        RelativeLayout.LayoutParams topOutBoxParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT, //width
                 RelativeLayout.LayoutParams.WRAP_CONTENT); //height
-        topOutBoxParams.addRule(RelativeLayout.ABOVE, NavModel.navBox.getId());
+        navBoxParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
 
+        RelativeLayout.LayoutParams listBoxParams = new RelativeLayout.LayoutParams (
+                RelativeLayout.LayoutParams.MATCH_PARENT, //width
+                RelativeLayout.LayoutParams.MATCH_PARENT); //height
+        listBoxParams.addRule(RelativeLayout.ABOVE, NavModel.navBox.getId());
+
+
+        mainScreen.addView(ListModel.listBox, listBoxParams);
         mainScreen.addView(NavModel.navBox, navBoxParams);
 
 
