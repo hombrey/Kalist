@@ -86,8 +86,9 @@ public class CalActivity extends Activity {
 
         RelativeLayout.LayoutParams listBoxParams = new RelativeLayout.LayoutParams (
                 RelativeLayout.LayoutParams.MATCH_PARENT, //width
-                RelativeLayout.LayoutParams.MATCH_PARENT); //height
+                RelativeLayout.LayoutParams.WRAP_CONTENT); //height
         listBoxParams.addRule(RelativeLayout.ABOVE, NavModel.navBox.getId());
+
 
 
         mainScreen.addView(ListModel.listBox, listBoxParams);
