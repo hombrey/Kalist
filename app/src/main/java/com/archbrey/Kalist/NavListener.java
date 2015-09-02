@@ -106,6 +106,7 @@ public class NavListener {
             case MONTHMODE:
                 CalActivity.navHandle.showMonth(NavID);
                 CalActivity.navHandle.reDrawMonth(NavID);
+                CalActivity.listHandle.listMonth();
                 break;
             case WEEKMODE:
                 CalActivity.navHandle.showWeek(NavID);
