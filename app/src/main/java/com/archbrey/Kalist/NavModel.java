@@ -39,6 +39,8 @@ public class NavModel {
     public static Calendar navMonthCalendar;
     public static int currentYear;
     public static int currentMonth;
+    public static int currentWeek;
+    public static int currentDate;
 
     public static String fullMonthStr[];
 
@@ -187,7 +189,7 @@ public class NavModel {
 
                 if (!StartCounting&&( (MaxDate) == Weekday ) ) {
                     StartCounting=true;
-                } //if (!StartCounting&&( (navMonthCalendar.get(Calendar.DAY_OF_WEEK)) == Weekday ) )
+                } // if (!StartCounting&&( (MaxDate) == Weekday ) )
 
                 if ( (StartCounting)&&(!StopCounting) ) {
                     if (date == navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)) StopCounting = true;
@@ -305,7 +307,7 @@ public class NavModel {
         LinearLayout.LayoutParams dateInfoParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        topOutBox.setGravity(Gravity.RIGHT);
+        topOutBox.setGravity(Gravity.END);
 
 
         topOutBox.setBackgroundColor(SettingsActivity.backerColor);
@@ -414,7 +416,13 @@ public class NavModel {
     }//public void showMonth()
 
     public void showWeek(int getWeek){
-        dateInfo.setText("Week " + String.valueOf(getWeek));
+        currentWeek = getWeek;
+
+        dateInfo.setText("Week " + String.valueOf(currentWeek));
+
+        navMonthCalendar.set(Calendar.WEEK_OF_YEAR, currentWeek);
+        navMonthCalendar.set(Calendar.YEAR, currentYear);
+
     }//public void showWeek()
 
     public void showDate(int getDate){
@@ -422,10 +430,12 @@ public class NavModel {
         String sYear;
         String sDate;
 
+        currentDate = getDate;
+        navMonthCalendar.set(currentYear, currentMonth, currentDate);
 
         sYear = String.valueOf(currentYear);
         sMonth = NavModel.fullMonthStr[currentMonth];
-        sDate = String.valueOf(getDate);
+        sDate = String.valueOf(currentDate);
 
         dateInfo.setText(sMonth+" "+sDate+", "+sYear);
 

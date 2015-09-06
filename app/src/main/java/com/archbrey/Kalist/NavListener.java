@@ -110,9 +110,11 @@ public class NavListener {
                 break;
             case WEEKMODE:
                 CalActivity.navHandle.showWeek(NavID);
+                CalActivity.listHandle.listWeek();
                 break;
             case DATEMODE:
                 CalActivity.navHandle.showDate(NavID);
+                CalActivity.listHandle.listDate();
                 break;
             case YEARMODE:
                 NavModel.yearHolder.setText("<- " + String.valueOf(NavModel.currentYear+NavID) + " ->");
