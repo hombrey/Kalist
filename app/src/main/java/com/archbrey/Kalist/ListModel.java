@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 //import java.text.SimpleDateFormat;
 //import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Calendar;
 //import java.util.Date;
 //import java.util.GregorianCalendar;
@@ -20,7 +21,8 @@ public class ListModel {
     public static ScrollView listBox;
     private static Context mainContext;
     private static String CNames[];
-    public static EventItem eventItems[];
+
+    public static ArrayList<EventItem> eventArrayList;
 
     private static Calendar lookupStart;
     private static Calendar lookupStop;
@@ -29,7 +31,14 @@ public class ListModel {
 
     private static LinearLayout listLayout;
 
+    private static TextView[] MonthLabel;
+    private static TextView[] DayofWeekLabel;
+
+    private static ArrayList<TextView> TextViewList;
+    private static ArrayList<TextView> EventViewList;
+
 public ListModel(){
+
 
     mainContext = CalActivity.c;
     listBox = new ScrollView(mainContext);
@@ -43,6 +52,23 @@ public ListModel(){
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT);
     eventParams.gravity=Gravity.BOTTOM;
+
+
+    MonthLabel = new TextView[12];
+    for (int monthInc=0; monthInc<=11; monthInc++) {
+        MonthLabel[monthInc] = new TextView (mainContext);
+        MonthLabel[monthInc].setText(CalActivity.navHandle.fullMonthStr[monthInc]);
+    } // for (int monthInc=0; monthInc<=11; monthInc++)
+
+    DayofWeekLabel = new TextView[8];
+    for (int weekInc=1; weekInc<=7; weekInc++) {
+        MonthLabel[weekInc] = new TextView (mainContext);
+        MonthLabel[weekInc].setText(CalActivity.navHandle.dayofWeek[weekInc]);
+    } // for (int weekInc=1; weekInc<=7; weekInc++)
+
+
+    TextViewList = new ArrayList<>();
+    EventViewList = new ArrayList<>();
 
 } //public ListModel()
 
@@ -61,6 +87,21 @@ public void drawBox() {
 
 } //public static void drawBox()
 
+    public void drawMonthList(){
+
+        TextView[] eventText;
+        TextView[] DateText;
+
+        LinearLayout[] EventView;
+
+        lookupStart.set(NavModel.currentYear, NavModel.currentMonth, 1, 0,0);
+        lookupStop.set(NavModel.currentYear, NavModel.currentMonth + 1, 1, 0, 0);
+        fetchList();
+
+     //   EventView = new LinearLayout[eventItems.length+6+1];
+     //   eventText = new TextView[eventItems.length+1];
+
+    }//public void drawMonthList()
 
     public void listYear() {
 
@@ -122,11 +163,15 @@ public void drawBox() {
         cursor.moveToFirst();
         // fetching calendars name
         CNames = new String[cursor.getCount()];
-        eventItems = new EventItem[cursor.getCount()];
+      //  eventItems = new EventItem[cursor.getCount()];
+
+
+        eventArrayList = new ArrayList<>();
 
         for (int i = 0; i < CNames.length; i++) {
 
-            eventItems[i] = new EventItem();
+       //     eventItems[i] = new EventItem();
+
 
             Long startDate;
             Long stopDate;
@@ -134,41 +179,43 @@ public void drawBox() {
             startDate = Long.parseLong(cursor.getString(3));
             if (cursor.getString(4)!= null)  stopDate = Long.parseLong(cursor.getString(4));
                else stopDate = null;
+            eventArrayList.add(new EventItem(cursor.getString(0),
+                                            cursor.getString(1),
+                                            cursor.getString(2),
+                                            cursor.getString(3),
+                                            cursor.getString(4)) );
 
-            eventItems[i].Title = cursor.getString(1);
-            eventItems[i].Description = cursor.getString(2);
-            eventItems[i].ID = Integer.valueOf(cursor.getString(0));
-            eventItems[i].StartDate.setTimeInMillis(startDate);
-            if ( stopDate != null) eventItems[i].StopDate.setTimeInMillis(stopDate);
-
-            // CNames[i] = cursor.getString(1);
             cursor.moveToNext();
 
         } //for (int i = 0; i < CNames.length; i++)
+
+        cursor.close();
 
     } //private void fetchList()
 
 
     public void updateBox(){
 
-        TextView[] sampleText;
 
-        if (listBox.getChildCount()>0) listBox.removeAllViews();
-        if (listLayout.getChildCount()>0) listLayout.removeAllViews();
+      //  if (listBox.getChildCount()>=0) listBox.removeAllViews();
+      //  if (listLayout.getChildCount()>=0) listLayout.removeAllViews();
 
-        sampleText = new TextView[eventItems.length+1];
+        listBox.removeAllViews();
+        listLayout.removeAllViews();
+        TextViewList.clear();
 
-        for (int inc = 0; inc < eventItems.length; inc++) {
+        for (int inc = 0; inc < eventArrayList.size(); inc++)
+        {
 
-            sampleText[inc] = new TextView(mainContext);
-            sampleText[inc].setTextColor(SettingsActivity.textColor);
-            sampleText[inc].setGravity(Gravity.LEFT);
-            sampleText[inc].setText(eventItems[inc].Title+" "+
-                                    String.valueOf(eventItems[inc].Month(true)) + "/" +
-                                    String.valueOf(eventItems[inc].dayOfMonth(true)) +
-                                    "\n");
+            TextViewList.add(new TextView(mainContext));
+            TextViewList.get(inc).setTextColor(SettingsActivity.textColor);
+            TextViewList.get(inc).setGravity(Gravity.LEFT);
+            TextViewList.get(inc).setText(eventArrayList.get(inc).Title + " " +
+                    String.valueOf(eventArrayList.get(inc).Month(true)) + "/" +
+                    String.valueOf(eventArrayList.get(inc).dayOfMonth(true)) +
+                    "\n");
 
-            listLayout.addView(sampleText[inc], eventParams);
+            listLayout.addView(TextViewList.get(inc), eventParams);
         }
 
         listBox.addView(listLayout,eventParams);

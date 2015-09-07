@@ -28,6 +28,27 @@ public class EventItem {
 
     } //public EventItem()
 
+    public EventItem(String getID, String getTitle, String getDescription, String getStart, String getStop){
+
+        StartDate = new GregorianCalendar();
+        StopDate = new GregorianCalendar();
+
+        Long startDate;
+        Long stopDate;
+
+        startDate = Long.parseLong(getStart);
+        if (getStop!= null)  stopDate = Long.parseLong(getStop);
+        else stopDate = null;
+
+        StartDate.setTimeInMillis(startDate);
+        if ( stopDate != null) StopDate.setTimeInMillis(stopDate);
+
+        Title = getTitle;
+        Description = getDescription;
+        ID = Integer.valueOf(getID);
+
+    } //public EventItem()
+
     public Integer Year(boolean isGetStart){
 
         Integer extractYear;

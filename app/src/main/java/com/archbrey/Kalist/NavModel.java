@@ -43,6 +43,7 @@ public class NavModel {
     public static int currentDate;
 
     public static String fullMonthStr[];
+    public static String dayofWeek[];
 
     public NavModel(){
 
@@ -144,7 +145,7 @@ public class NavModel {
         StartCounting = false;
         StopCounting = false;
 
-        String dayofWeek[];
+
         String startWeekString,stopWeekString;
 
         dayofWeek = new String[8];
