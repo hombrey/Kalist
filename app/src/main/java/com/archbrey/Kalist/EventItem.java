@@ -17,7 +17,7 @@ public class EventItem {
     private static final SimpleDateFormat dayOfMonthF = new SimpleDateFormat("dd");
     private static final SimpleDateFormat MonthF = new SimpleDateFormat("MM");
     private static final SimpleDateFormat YearF = new SimpleDateFormat("yyyy");
-    private static final SimpleDateFormat WeekF = new SimpleDateFormat("W");
+    private static final SimpleDateFormat WeekF = new SimpleDateFormat("w");
     private static final SimpleDateFormat HourF = new SimpleDateFormat("HH");
     private static final SimpleDateFormat MinuteF = new SimpleDateFormat("MM");
 
@@ -27,6 +27,10 @@ public class EventItem {
         StopDate = new GregorianCalendar();
 
     } //public EventItem()
+
+    public EventItem(String getID){
+        Title = getID;
+    } //
 
     public EventItem(String getID, String getTitle, String getDescription, String getStart, String getStop){
 

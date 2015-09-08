@@ -3,6 +3,7 @@ package com.archbrey.Kalist;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.CalendarContract;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -13,8 +14,12 @@ import android.widget.TextView;
 //import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 //import java.util.Date;
 //import java.util.GregorianCalendar;
+
+
 
 public class ListModel {
 
@@ -36,6 +41,9 @@ public class ListModel {
 
     private static ArrayList<TextView> TextViewList;
     private static ArrayList<TextView> EventViewList;
+    public static ArrayList<LinearLayout> EventView;
+
+
 
 public ListModel(){
 
@@ -69,11 +77,14 @@ public ListModel(){
 
     TextViewList = new ArrayList<>();
     EventViewList = new ArrayList<>();
+    EventView = new ArrayList<>();
 
 } //public ListModel()
 
 
-public void drawBox() {
+
+
+    public void drawBox() {
 
     listBox.setBackgroundColor(SettingsActivity.backerColor);
 
@@ -89,19 +100,47 @@ public void drawBox() {
 
     public void drawMonthList(){
 
-        TextView[] eventText;
-        TextView[] DateText;
-
-        LinearLayout[] EventView;
-
         lookupStart.set(NavModel.currentYear, NavModel.currentMonth, 1, 0,0);
         lookupStop.set(NavModel.currentYear, NavModel.currentMonth + 1, 1, 0, 0);
         fetchList();
 
-     //   EventView = new LinearLayout[eventItems.length+6+1];
-     //   eventText = new TextView[eventItems.length+1];
+        listBox.removeAllViews();
+        listLayout.removeAllViews();
+        EventViewList.clear();
+
+        Collections.sort(eventArrayList, new CalStartCompare());
+
+        int ViewCount = -1;
+        for (int inc = 0; inc < eventArrayList.size(); inc++)
+        {
+            if (inc==0) addGroupHeaderView("Week "+String.valueOf(eventArrayList.get(inc).Week(true)), ++ViewCount);
+            else if (eventArrayList.get(inc).Week(true) != eventArrayList.get(inc-1).Week(true))  addGroupHeaderView("Week "+String.valueOf(eventArrayList.get(inc).Week(true)), ++ViewCount);
+
+            EventViewList.add(new TextView(mainContext)); ViewCount++;
+            EventViewList.get(ViewCount).setTextColor(SettingsActivity.textColor);
+            EventViewList.get(ViewCount).setGravity(Gravity.LEFT);
+            EventViewList.get(ViewCount).setText(eventArrayList.get(inc).Title + " " +
+                    String.valueOf(eventArrayList.get(inc).Month(true)) + "/" +
+                    String.valueOf(eventArrayList.get(inc).dayOfMonth(true)) +
+                    "\n");
+
+            listLayout.addView(EventViewList.get(ViewCount), eventParams);
+        }
+
+        listBox.addView(listLayout, eventParams);
 
     }//public void drawMonthList()
+
+
+    private void addGroupHeaderView(String GroupHeader,int ViewCount){
+
+        EventViewList.add(new TextView(mainContext));
+        EventViewList.get(ViewCount).setTextColor(SettingsActivity.textColor);
+        EventViewList.get(ViewCount).setGravity(Gravity.LEFT);
+        EventViewList.get(ViewCount).setText(GroupHeader);
+        listLayout.addView(EventViewList.get(ViewCount), eventParams);
+
+    } //private void addWeekView()
 
     public void listYear() {
 
@@ -149,43 +188,31 @@ public void drawBox() {
 
     private void fetchList(){
 
+            String selection = "((dtstart >= " + lookupStart.getTimeInMillis() + ") AND (dtstart < " + lookupStop.getTimeInMillis() + "))";
+            String[] projection = new String[]{"calendar_id", "title", "description",
+                    "dtstart", "dtend", "eventLocation"};
 
-        String selection = "((dtstart >= "+lookupStart.getTimeInMillis()+") AND (dtstart < "+lookupStop.getTimeInMillis()+"))";
-        String[] projection = new String[] { "calendar_id", "title", "description",
-                "dtstart", "dtend", "eventLocation" };
-
-        Cursor cursor = mainContext.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
-                projection,
-                selection,
-                null,
-                null);
+            Cursor cursor = mainContext.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
+                    projection,
+                    selection,
+                    null,
+                    null);
 
         cursor.moveToFirst();
-        // fetching calendars name
-        CNames = new String[cursor.getCount()];
-      //  eventItems = new EventItem[cursor.getCount()];
-
 
         eventArrayList = new ArrayList<>();
 
-        for (int i = 0; i < CNames.length; i++) {
+        //for (int i = 0; i < CNames.length; i++) {
+        for (int i = 0; i < cursor.getCount(); i++) {
 
-       //     eventItems[i] = new EventItem();
-
-
-            Long startDate;
-            Long stopDate;
-
-            startDate = Long.parseLong(cursor.getString(3));
-            if (cursor.getString(4)!= null)  stopDate = Long.parseLong(cursor.getString(4));
-               else stopDate = null;
             eventArrayList.add(new EventItem(cursor.getString(0),
                                             cursor.getString(1),
                                             cursor.getString(2),
                                             cursor.getString(3),
                                             cursor.getString(4)) );
 
-            cursor.moveToNext();
+
+                     cursor.moveToNext();
 
         } //for (int i = 0; i < CNames.length; i++)
 
@@ -221,6 +248,7 @@ public void drawBox() {
         listBox.addView(listLayout,eventParams);
 
     } //public void updateBox()
+
 
 
 
