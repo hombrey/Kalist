@@ -1,5 +1,6 @@
 package com.archbrey.Kalist;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,14 +11,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 
-//import java.text.SimpleDateFormat;
-//import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
-//import java.util.Date;
-//import java.util.GregorianCalendar;
+
+
 
 
 
@@ -25,7 +23,6 @@ public class ListModel {
 
     public static ScrollView listBox;
     private static Context mainContext;
-    private static String CNames[];
 
     public static ArrayList<EventItem> eventArrayList;
 
@@ -41,6 +38,7 @@ public class ListModel {
 
     private static ArrayList<TextView> TextViewList;
     private static ArrayList<TextView> EventViewList;
+    private static ArrayList<LinearLayout[]> SubEventView;
     public static ArrayList<LinearLayout> EventView;
 
 
@@ -65,23 +63,23 @@ public ListModel(){
     MonthLabel = new TextView[12];
     for (int monthInc=0; monthInc<=11; monthInc++) {
         MonthLabel[monthInc] = new TextView (mainContext);
-        MonthLabel[monthInc].setText(CalActivity.navHandle.fullMonthStr[monthInc]);
+        MonthLabel[monthInc].setText(NavModel.fullMonthStr[monthInc]);
     } // for (int monthInc=0; monthInc<=11; monthInc++)
 
     DayofWeekLabel = new TextView[8];
     for (int weekInc=1; weekInc<=7; weekInc++) {
         MonthLabel[weekInc] = new TextView (mainContext);
-        MonthLabel[weekInc].setText(CalActivity.navHandle.dayofWeek[weekInc]);
+        MonthLabel[weekInc].setText(NavModel.dayofWeek[weekInc]);
     } // for (int weekInc=1; weekInc<=7; weekInc++)
 
 
     TextViewList = new ArrayList<>();
     EventViewList = new ArrayList<>();
     EventView = new ArrayList<>();
+    SubEventView = new ArrayList<>();
+
 
 } //public ListModel()
-
-
 
 
     public void drawBox() {
@@ -111,18 +109,27 @@ public ListModel(){
         Collections.sort(eventArrayList, new CalStartCompare());
 
         int ViewCount = -1;
+        int SubViewCount = -1;
         for (int inc = 0; inc < eventArrayList.size(); inc++)
         {
-            if (inc==0) addGroupHeaderView("Week "+String.valueOf(eventArrayList.get(inc).Week(true)), ++ViewCount);
+            if (inc==0) addGroupHeaderView("\n Week "+String.valueOf(eventArrayList.get(inc).Week(true)), ++ViewCount);
             else if (eventArrayList.get(inc).Week(true) != eventArrayList.get(inc-1).Week(true))  addGroupHeaderView("Week "+String.valueOf(eventArrayList.get(inc).Week(true)), ++ViewCount);
+
+            SubEventView.add(new LinearLayout[2]); SubViewCount++;
+            SubEventView.get(SubViewCount)[0] = new LinearLayout(mainContext);
+            SubEventView.get(SubViewCount)[1] = new LinearLayout(mainContext);
 
             EventViewList.add(new TextView(mainContext)); ViewCount++;
             EventViewList.get(ViewCount).setTextColor(SettingsActivity.textColor);
             EventViewList.get(ViewCount).setGravity(Gravity.LEFT);
-            EventViewList.get(ViewCount).setText(eventArrayList.get(inc).Title + " " +
+          /*  EventViewList.get(ViewCount).setText(eventArrayList.get(inc).Title + " " +
                     String.valueOf(eventArrayList.get(inc).Month(true)) + "/" +
                     String.valueOf(eventArrayList.get(inc).dayOfMonth(true)) +
-                    "\n");
+                    "\n");*/
+            EventViewList.get(ViewCount).setText("   (" +String.valueOf(eventArrayList.get(inc).dayOfMonth(true)) + ") " +
+                                                eventArrayList.get(inc).dayOfWeek(true) + " | " +
+                                                eventArrayList.get(inc).Title +
+                                                    " ");
 
             listLayout.addView(EventViewList.get(ViewCount), eventParams);
         }
@@ -167,7 +174,7 @@ public ListModel(){
         lookupStart.set(Calendar.YEAR, NavModel.currentYear);
 
         lookupStop.set(Calendar.DAY_OF_WEEK, 1);
-        lookupStop.set(Calendar.WEEK_OF_YEAR, NavModel.currentWeek+1);
+        lookupStop.set(Calendar.WEEK_OF_YEAR, NavModel.currentWeek + 1);
         lookupStop.set(Calendar.YEAR, NavModel.currentYear);
 
         fetchList();
@@ -188,21 +195,32 @@ public ListModel(){
 
     private void fetchList(){
 
-            String selection = "((dtstart >= " + lookupStart.getTimeInMillis() + ") AND (dtstart < " + lookupStop.getTimeInMillis() + "))";
-            String[] projection = new String[]{"calendar_id", "title", "description",
-                    "dtstart", "dtend", "eventLocation"};
 
+        String[] projection = new String[]{"calendar_id",
+                                            "title",
+                                            "description",
+                                            CalendarContract.Instances.BEGIN,
+                                            CalendarContract.Instances.END,
+                                            "eventLocation"};
+/*
             Cursor cursor = mainContext.getContentResolver().query(Uri.parse("content://com.android.calendar/events"),
                     projection,
                     selection,
                     null,
-                    null);
+                    null);*/
+
+        Uri.Builder eventsUriBuilder = CalendarContract.Instances.CONTENT_URI
+                .buildUpon();
+        ContentUris.appendId(eventsUriBuilder, lookupStart.getTimeInMillis());
+        ContentUris.appendId(eventsUriBuilder, lookupStop.getTimeInMillis());
+        Uri eventsUri = eventsUriBuilder.build();
+        Cursor cursor = null;
+        cursor = mainContext.getContentResolver().query(eventsUri, projection, null, null, CalendarContract.Instances.DTSTART + " ASC");
 
         cursor.moveToFirst();
 
         eventArrayList = new ArrayList<>();
 
-        //for (int i = 0; i < CNames.length; i++) {
         for (int i = 0; i < cursor.getCount(); i++) {
 
             eventArrayList.add(new EventItem(cursor.getString(0),
@@ -214,7 +232,7 @@ public ListModel(){
 
                      cursor.moveToNext();
 
-        } //for (int i = 0; i < CNames.length; i++)
+        } //for (int i = 0; i < cursor.getCount(); i++)
 
         cursor.close();
 
