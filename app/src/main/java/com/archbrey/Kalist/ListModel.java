@@ -108,10 +108,35 @@ public ListModel(){
 
         Collections.sort(eventArrayList, new CalStartCompare());
 
+        ArrayList<ArrayList<EventItem>> MonthSocket = new ArrayList<ArrayList<EventItem>>();
+
+        int arrayListIndex = 0;
+        MonthSocket.add(new ArrayList<EventItem>()); int socketCount = 0; //dummy position "0" so actual monthsocket will fill up from (1)
+        for (int incMonth = 1; incMonth <= NavModel.navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH); incMonth++) {
+
+            MonthSocket.add(new ArrayList<EventItem>());
+            int testDate;
+
+             if (arrayListIndex<eventArrayList.size()) //make sure that arrayListIndex does not access any element beyond eventArrayList size
+                    testDate = eventArrayList.get(arrayListIndex).dayOfMonth(true);
+             else testDate = NavModel.navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)+1;
+
+               while  (testDate == incMonth) {
+                   MonthSocket.get(incMonth).add(eventArrayList.get(arrayListIndex));
+                   arrayListIndex++;
+                   if (arrayListIndex<eventArrayList.size())
+                       testDate = eventArrayList.get(arrayListIndex).dayOfMonth(true);
+                   else testDate = NavModel.navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)+1;
+
+               } //while ( (eventArrayList.get(arrayListIndex).dayOfMonth(true) == incMonth) || (KeepInLoop) )
+
+        } //for (int inc = 0; inc <= NavModel.navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH); inc++)
+
+
         int ViewCount = -1;
         int SubViewCount = -1;
-        for (int inc = 0; inc < eventArrayList.size(); inc++)
-        {
+
+        for (int inc = 0; inc < eventArrayList.size(); inc++) {
             if (inc==0) addGroupHeaderView("\n Week "+String.valueOf(eventArrayList.get(inc).Week(true)), ++ViewCount);
             else if (eventArrayList.get(inc).Week(true) != eventArrayList.get(inc-1).Week(true))  addGroupHeaderView("Week "+String.valueOf(eventArrayList.get(inc).Week(true)), ++ViewCount);
 
@@ -122,19 +147,17 @@ public ListModel(){
             EventViewList.add(new TextView(mainContext)); ViewCount++;
             EventViewList.get(ViewCount).setTextColor(SettingsActivity.textColor);
             EventViewList.get(ViewCount).setGravity(Gravity.LEFT);
-          /*  EventViewList.get(ViewCount).setText(eventArrayList.get(inc).Title + " " +
-                    String.valueOf(eventArrayList.get(inc).Month(true)) + "/" +
-                    String.valueOf(eventArrayList.get(inc).dayOfMonth(true)) +
-                    "\n");*/
+
             EventViewList.get(ViewCount).setText("   (" +String.valueOf(eventArrayList.get(inc).dayOfMonth(true)) + ") " +
                                                 eventArrayList.get(inc).dayOfWeek(true) + " | " +
                                                 eventArrayList.get(inc).Title +
                                                     " ");
 
             listLayout.addView(EventViewList.get(ViewCount), eventParams);
-        }
+        }//for (int inc = 0; inc < eventArrayList.size(); inc++)
 
-        listBox.addView(listLayout, eventParams);
+
+        listBox.addView(listLayout, eventParams); //add assembled Linear layout into scrollview
 
     }//public void drawMonthList()
 
