@@ -18,7 +18,7 @@ android {
             proguardFile '/home/archbrey/AndroidStudioProjects/Kalist/proguard-android.txt'
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             shrinkResources true
             proguardFile '/home/archbrey/AndroidStudioProjects/Kalist/proguard-android.txt'
             renderscriptDebuggable false
