@@ -2,9 +2,11 @@ package com.archbrey.Kalist;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -14,9 +16,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-
-
-
 
 
 public class ListModel {
@@ -30,6 +29,7 @@ public class ListModel {
     private static Calendar lookupStop;
 
     private static LinearLayout.LayoutParams eventParams;
+    private static LinearLayout.LayoutParams subGroupParams;
 
     private static LinearLayout listLayout;
 
@@ -47,11 +47,15 @@ public class ListModel {
     private static ArrayList<TextView> EventHeaderText;
     private static ArrayList<TextView> EventViewText;
 
+    private Resources rMain;
+
 
 public ListModel(){
 
 
     mainContext = CalActivity.c;
+    rMain = CalActivity.r;
+
     listBox = new ScrollView(mainContext);
     listLayout = new LinearLayout(mainContext);
     listLayout.setOrientation(LinearLayout.VERTICAL);
@@ -60,9 +64,18 @@ public ListModel(){
     lookupStop = Calendar.getInstance();
 
     eventParams = new LinearLayout.LayoutParams (
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams.WRAP_CONTENT, //width
+            LinearLayout.LayoutParams.WRAP_CONTENT); //height
     eventParams.gravity=Gravity.TOP;
+
+    int sub_width = (int) TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 60,
+            rMain.getDisplayMetrics());
+
+    subGroupParams = new LinearLayout.LayoutParams (
+            sub_width,  //width
+            LinearLayout.LayoutParams.WRAP_CONTENT);  //height
+    subGroupParams.gravity=Gravity.TOP;
 
     MonthLabel = new TextView[12];
     for (int monthInc=0; monthInc<=11; monthInc++) {
@@ -82,7 +95,8 @@ public ListModel(){
     EventHeaderText = new ArrayList<>();
     EventView = new ArrayList<>();
     SubEventView = new ArrayList<>();
-
+    SubGroupText = new ArrayList<>();
+    SubEventList = new ArrayList<ArrayList<TextView>>();
 
 } //public ListModel()
 
@@ -110,6 +124,11 @@ public ListModel(){
         listBox.removeAllViews(); //remove contents of layout
         listLayout.removeAllViews();
         EventHeaderText.clear(); // remove contents of Text view list
+        for (int clearInc=0; clearInc<SubEventView.size(); clearInc++) {
+            SubEventView.get(clearInc)[0].removeAllViews();
+
+        } //for (int clearInc=0; clearInc<SubEventView.size(); clearInc++)
+        SubEventList.clear();
         SubEventView.clear();
         EventView.clear();
 
@@ -119,11 +138,6 @@ public ListModel(){
         int SubViewCount = -1;
         int arrayListIndex = 0;
 
-        //private static ArrayList<LinearLayout[]> SubEventView;
-        //private static ArrayList<TextView> SubGroupText;
-        //private static ArrayList<ArrayList<TextView>> SubEventList;
-
-        SubEventView.add(new LinearLayout[2]); SubViewCount++;//dummy position "0" so actual event socket will fill up from (1)
         for (int incMonth = 1; incMonth <= NavModel.navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH); incMonth++) {
 
             int testDate;
@@ -146,8 +160,8 @@ public ListModel(){
                         addGroupHeaderView("Week " + String.valueOf(eventArrayList.get(arrayListIndex).Week(true)), ++ViewCount);
 
                 EventView.add(new LinearLayout(mainContext)); ViewCount++;
-                EventHeaderText.add(new TextView(mainContext));
-                EventHeaderText.get(ViewCount).setText(" ");
+                EventHeaderText.add(new TextView(mainContext)); //need to add EventHeaderText even if not used to keep alignment with EventView index
+
                 EventView.get(ViewCount).setOrientation(LinearLayout.HORIZONTAL);
 
                 SubEventView.add(new LinearLayout[2]); SubViewCount++;
@@ -155,16 +169,29 @@ public ListModel(){
                 SubEventView.get(SubViewCount)[1] = new LinearLayout(mainContext);
                 SubEventView.get(SubViewCount)[1].setOrientation(LinearLayout.VERTICAL);
 
+                SubEventList.add( new ArrayList<TextView>() );
+
+                //fill up sub event Text using the first item that matches the time increment socket
+                SubGroupText.add(new TextView(mainContext));
+                SubGroupText.get(SubViewCount).setText(String.valueOf(eventArrayList.get(arrayListIndex).dayOfMonth(true)) + "|" +
+                                eventArrayList.get(arrayListIndex).dayOfWeek(true)
+                );
+
+                SubEventView.get(SubViewCount)[0].addView(SubGroupText.get(SubViewCount), eventParams);
+                EventView.get(ViewCount).addView(SubEventView.get(SubViewCount)[0], subGroupParams);
+
+                int SubEventListCount = -1;
+
                 while  (testDate == incMonth) { //for cases when multiple events match subgroup
 
                     if (arrayListIndex<eventArrayList.size()) {
                     testDate = eventArrayList.get(arrayListIndex).dayOfMonth(true);
 
                         if  (testDate == incMonth) { //add to list only if current event item in array matches time socket criteria
-                            EventHeaderText.get(ViewCount).append("\n  (" + String.valueOf(eventArrayList.get(arrayListIndex).dayOfMonth(true)) + ") " +
-                               eventArrayList.get(arrayListIndex).dayOfWeek(true) + " | " +
-                               eventArrayList.get(arrayListIndex).Title +
-                               " ");
+
+                           SubEventList.get(SubViewCount).add(new TextView(mainContext)); SubEventListCount++;
+                           SubEventList.get(SubViewCount).get(SubEventListCount).setText( eventArrayList.get(arrayListIndex).Title );
+                            SubEventView.get(SubViewCount)[1].addView(SubEventList.get(SubViewCount).get(SubEventListCount), eventParams);
                             arrayListIndex++;
                         } // if  (testDate == incMonth)
 
@@ -174,14 +201,12 @@ public ListModel(){
 
                 } //while ( (eventArrayList.get(arrayListIndex).dayOfMonth(true) == incMonth) || (KeepInLoop) )
 
-                EventView.get(ViewCount).addView(EventHeaderText.get(ViewCount), eventParams);
+                EventView.get(ViewCount).addView(SubEventView.get(SubViewCount)[1], eventParams);
                 listLayout.addView(EventView.get(ViewCount), eventParams);
 
             }// if (testDate == incMonth)
 
         } //for (int inc = 0; inc <= NavModel.navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH); inc++)
-
-
 
         listBox.addView(listLayout, eventParams); //add assembled Linear layout into scrollview
 
