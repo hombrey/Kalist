@@ -52,7 +52,7 @@ public class NavListener {
     public static int NavID;
 
     private float initialTouchX;
-    private float initialTouchY;
+    //private float initialTouchY;
 
     public NavListener() {
 
@@ -82,7 +82,7 @@ public class NavListener {
                         switch (action) {
                             case (MotionEvent.ACTION_DOWN):
                                 initialTouchX = currentX;
-                                initialTouchY = currentY;
+                                //initialTouchY = currentY;
                                 touchMode = 1;
                                 if (monthsWidth < 1) refreshNavPadLocations(); //only perform one time
                                 determineTouchMode(currentX, currentY);
@@ -106,7 +106,8 @@ public class NavListener {
             case MONTHMODE:
                 CalActivity.navHandle.showMonth(NavID);
                 CalActivity.navHandle.reDrawMonth(NavID);
-                CalActivity.listHandle.drawMonthList();
+                //CalActivity.listHandle.drawMonthList();
+                CalActivity.listHandle.drawList("Month");
                 break;
             case WEEKMODE:
                 CalActivity.navHandle.showWeek(NavID);
@@ -118,6 +119,7 @@ public class NavListener {
                 break;
             case YEARMODE:
                 NavModel.yearHolder.setText("<- " + String.valueOf(NavModel.currentYear+NavID) + " ->");
+                CalActivity.listHandle.drawList("Year");
                 break;
             default:
                 break;

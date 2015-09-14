@@ -15,7 +15,8 @@ public class EventItem {
 
     private static final SimpleDateFormat dayOfWeekF = new SimpleDateFormat("EEE");
     private static final SimpleDateFormat dayOfMonthF = new SimpleDateFormat("dd");
-    private static final SimpleDateFormat MonthF = new SimpleDateFormat("MM");
+    private static final SimpleDateFormat dayOfYearF = new SimpleDateFormat("D");
+    private static final SimpleDateFormat MonthF = new SimpleDateFormat("M");
     private static final SimpleDateFormat YearF = new SimpleDateFormat("yyyy");
     private static final SimpleDateFormat WeekF = new SimpleDateFormat("w");
     private static final SimpleDateFormat HourF = new SimpleDateFormat("HH");
@@ -106,6 +107,20 @@ public class EventItem {
 
         return extractdayOfMonth;
     } //public Integer dayOfMonth()
+
+    public Integer dayOfYear(boolean isGetStart){
+
+        Integer extractdayOfYear;
+        String dateString;
+
+        if (isGetStart) dateString = dayOfYearF.format(StartDate.getTime());
+        else dateString = dayOfYearF.format(StopDate.getTime());
+
+        extractdayOfYear = Integer.valueOf(dateString);
+
+        return extractdayOfYear;
+    } //public Integer dayOfMonth()
+
 
     public String dayOfWeek(boolean isGetStart){
 
