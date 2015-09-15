@@ -88,7 +88,11 @@ public class NavListener {
                                 determineTouchMode(currentX, currentY);
                                 break;
                             case (MotionEvent.ACTION_UP):
-                                if (touchMode==YEARMODE) CalActivity.navHandle.reDrawYear(NavModel.currentYear+NavID);
+                                if (touchMode==YEARMODE) {
+                                    CalActivity.navHandle.reDrawYear(NavModel.currentYear + NavID);
+                                    CalActivity.listHandle.drawList("Year");
+                                    NavModel.listInfo.setText("Year View");
+                                 }//if (touchMode==YEARMODE)
                                 if (touchMode>=MONTHMODE) refreshNavPadLocations();
                                 touchMode = 0;
                                 break;
@@ -108,18 +112,20 @@ public class NavListener {
                 CalActivity.navHandle.reDrawMonth(NavID);
                 //CalActivity.listHandle.drawMonthList();
                 CalActivity.listHandle.drawList("Month");
+                NavModel.listInfo.setText("Month View");
                 break;
             case WEEKMODE:
                 CalActivity.navHandle.showWeek(NavID);
                 CalActivity.listHandle.listWeek();
+                NavModel.listInfo.setText("Week View");
                 break;
             case DATEMODE:
                 CalActivity.navHandle.showDate(NavID);
                 CalActivity.listHandle.listDate();
+                NavModel.listInfo.setText("Day View");
                 break;
             case YEARMODE:
-                NavModel.yearHolder.setText("<- " + String.valueOf(NavModel.currentYear+NavID) + " ->");
-                CalActivity.listHandle.drawList("Year");
+                NavModel.yearHolder.setText("<- " + String.valueOf(NavModel.currentYear + NavID) + " ->");
                 break;
             default:
                 break;

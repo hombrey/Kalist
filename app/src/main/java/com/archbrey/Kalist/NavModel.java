@@ -34,6 +34,7 @@ public class NavModel {
 
     public static LinearLayout topOutBox;
     public static TextView dateInfo;
+    public static TextView listInfo;
 
 
     public static Calendar navMonthCalendar;
@@ -62,7 +63,7 @@ public class NavModel {
 
         topOutBox = new LinearLayout(CalActivity.c);
         dateInfo = new TextView(CalActivity.c);
-
+        listInfo = new TextView(CalActivity.c);
 
         topYearRow = new LinearLayout(mainContext);
         yearHolder = new TextView(mainContext);
@@ -297,21 +298,38 @@ public class NavModel {
 // ------- Top Nav Info ---------------------------------------------------------------------------------
 
         int dateTextSize = 20;
+        int infoTextSize = 15;
 
         //dateInfo.setGravity(Gravity.RIGHT);
-        dateInfo.setText("date");
+        dateInfo.setText(" ");
         dateInfo.setTextColor(SettingsActivity.textColor);
         dateInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, dateTextSize);
+        dateInfo.setTypeface(null, Typeface.ITALIC);
+
+        listInfo.setText(" ");
+        listInfo.setTextColor(SettingsActivity.textColor);
+        listInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, infoTextSize);
+        listInfo.setTypeface(null, Typeface.ITALIC);
 
         dateInfo.setId(R.id.dateInfo);
 
         LinearLayout.LayoutParams dateInfoParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        topOutBox.setGravity(Gravity.END);
+        dateInfoParams.gravity = Gravity.END;
+        dateInfoParams.weight=0.1f;
 
+        LinearLayout.LayoutParams listInfoParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        listInfoParams.gravity = Gravity.START;
+        listInfoParams.weight=3f;
 
         topOutBox.setBackgroundColor(SettingsActivity.backerColor);
+        topOutBox.setOrientation(LinearLayout.HORIZONTAL);
+        //topOutBox.setGravity(Gravity.END);
+
+        topOutBox.addView(listInfo, listInfoParams);
         topOutBox.addView(dateInfo, dateInfoParams);
 
 // ------- assemble navBox ---------------------------------------------------------------------------------
@@ -412,8 +430,10 @@ public class NavModel {
     }// public void reDrawMonth(int getMonth)
 
 
+
+
     public void showMonth(int getMonth){
-        dateInfo.setText(NavModel.fullMonthStr[getMonth]);
+        dateInfo.setText(NavModel.fullMonthStr[getMonth]+ " " + String.valueOf(currentYear));
     }//public void showMonth()
 
     public void showWeek(int getWeek){

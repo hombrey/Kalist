@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 
@@ -83,14 +84,23 @@ public class CalActivity extends Activity {
                 RelativeLayout.LayoutParams.WRAP_CONTENT); //height
         navBoxParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
+        ListModel.listBox.setId(R.id.navBox);
 
         RelativeLayout.LayoutParams listBoxParams = new RelativeLayout.LayoutParams (
                 RelativeLayout.LayoutParams.MATCH_PARENT, //width
                 RelativeLayout.LayoutParams.WRAP_CONTENT); //height
         listBoxParams.addRule(RelativeLayout.ABOVE, NavModel.navBox.getId());
 
+        LinearLayout fillerBox;
+        fillerBox = new LinearLayout(this);
+        fillerBox.setBackgroundColor(SettingsActivity.backColor);
 
+        RelativeLayout.LayoutParams fillerBoxParams = new RelativeLayout.LayoutParams (
+                RelativeLayout.LayoutParams.MATCH_PARENT, //width
+                RelativeLayout.LayoutParams.MATCH_PARENT); //height
+        fillerBoxParams.addRule(RelativeLayout.ABOVE, NavModel.navBox.getId());
 
+        mainScreen.addView(fillerBox, fillerBoxParams);
         mainScreen.addView(ListModel.listBox, listBoxParams);
         mainScreen.addView(NavModel.navBox, navBoxParams);
 

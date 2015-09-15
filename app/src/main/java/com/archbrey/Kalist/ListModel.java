@@ -101,7 +101,7 @@ public ListModel(){
 
     public void drawBox() {
 
-    listBox.setBackgroundColor(SettingsActivity.backerColor);
+    listBox.setBackgroundColor(SettingsActivity.backColor);
 
     LinearLayout.LayoutParams sampleParams = new LinearLayout.LayoutParams (
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -283,23 +283,24 @@ public ListModel(){
 
                 if (listType.equals("Month")) {
 
+                    Integer eventWeek = eventArrayList.get(arrayListIndex).Week(true) ;
                     if (ViewCount == -1)
-                        addGroupHeaderView("Week " + String.valueOf(eventArrayList.get(arrayListIndex).Week(true)), ++ViewCount);
+                        addGroupHeaderView("Week " + String.valueOf(eventWeek), ++ViewCount);
                     else if (arrayListIndex > 0) //check to add to group header only if actual events have been added to the list
-                        if (!eventArrayList.get(arrayListIndex).Week(true).equals(eventArrayList.get(arrayListIndex - 1).Week(true)))
-                            addGroupHeaderView("Week " + String.valueOf(eventArrayList.get(arrayListIndex).Week(true)), ++ViewCount);
+                        if (!eventWeek.equals(eventArrayList.get(arrayListIndex - 1).Week(true)))
+                            addGroupHeaderView("Week " + String.valueOf(eventWeek), ++ViewCount);
 
                 } //if (listType.equals("Month"))
 
 
                 if (listType.equals("Year")) {
 
+                    Integer eventMonth = eventArrayList.get(arrayListIndex).Month(true) ;
                     if (ViewCount == -1)
-                        addGroupHeaderView( NavModel.fullMonthStr[eventArrayList.get(arrayListIndex).Month(true)-1] , ++ViewCount);
+                        addGroupHeaderView( NavModel.fullMonthStr[eventMonth -1] , ++ViewCount);
                     else if (arrayListIndex > 0) //check to add to group header only if actual events have been added to the list
-                        if (!eventArrayList.get(arrayListIndex).Month(true).equals(eventArrayList.get(arrayListIndex - 1).Month(true)))
-                           // addGroupHeaderView(String.valueOf(eventArrayList.get(arrayListIndex).Month(true)), ++ViewCount);
-                            addGroupHeaderView(NavModel.fullMonthStr[eventArrayList.get(arrayListIndex).Month(true)-1], ++ViewCount);
+                        if (!eventMonth.equals(eventArrayList.get(arrayListIndex - 1).Month(true)))
+                            addGroupHeaderView(NavModel.fullMonthStr[eventMonth-1], ++ViewCount);
 
                 } //if (listType.equals("Month"))
 
@@ -329,7 +330,7 @@ public ListModel(){
                  } //if (listType.equals("Month"))
 
                 if (listType.equals("Year")){
-                    subGroupLabel = String.valueOf(eventArrayList.get(arrayListIndex).dayOfMonth(true));
+                    subGroupLabel ="    " + String.valueOf(eventArrayList.get(arrayListIndex).dayOfMonth(true));
                 } //if (listType.equals("Month"))
 
                 SubGroupText.get(SubViewCount).setText(subGroupLabel);
@@ -369,6 +370,7 @@ public ListModel(){
         } //for (int inc = 0; inc <= NavModel.navMonthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH); inc++)
 
         listBox.addView(listLayout, eventParams); //add assembled Linear layout into scrollview
+
 
     }//public void drawList(String listType)
 
