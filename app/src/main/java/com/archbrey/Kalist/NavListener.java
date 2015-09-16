@@ -115,6 +115,7 @@ public class NavListener {
                 NavModel.listInfo.setText("Month View");
                 break;
             case WEEKMODE:
+
                 CalActivity.navHandle.showWeek(NavID);
                 CalActivity.listHandle.listWeek();
                 NavModel.listInfo.setText("Week View");
@@ -225,7 +226,7 @@ public class NavListener {
         instanceLocation = new int[2];
 
 
-         if (monthsWidth < 1) { //perform only if this hasn't been done before
+       if (monthsWidth < 1) { //perform only if this hasn't been done before
 
         //get Year
         yearWidth = NavModel.topYearRow.getWidth();
@@ -244,6 +245,10 @@ public class NavListener {
             monthsMap[monthInc].Y = instanceLocation[1];
         } //for (int monthInc=1; monthInc<=12; monthInc++)
 
+
+       } // if (monthsWidth < 0)
+
+
         //get Weeks
         weeksWidth = NavModel.weekHolder[1].getWidth(); //it's enough to get the first instance of a holder to represent all the rest
         weeksHeight = NavModel.weekHolder[1].getHeight();
@@ -261,9 +266,6 @@ public class NavListener {
 
         weeksLeftBoundary = weeksMap[1].X; //location of any week instance is the left boundary for "weeks" zone
         datesLeftBoundary = weeksMap[1].X + weeksWidth; //right side of weeks zone is the left boundary of "days" zone
-
-
-         } // if (monthsWidth < 0)
 
 
         //get days
