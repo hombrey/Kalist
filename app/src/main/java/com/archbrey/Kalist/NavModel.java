@@ -45,6 +45,7 @@ public class NavModel {
 
     public static String fullMonthStr[];
     public static String dayofWeek[];
+    public static String quarterDayStr[];
 
     public NavModel(){
 
@@ -106,6 +107,12 @@ public class NavModel {
         fullMonthStr[9] = rMain.getString(R.string.fullOctStr);
         fullMonthStr[10] = rMain.getString(R.string.fullNovStr);
         fullMonthStr[11] = rMain.getString(R.string.fullDecStr);
+
+        quarterDayStr = new String[4];
+        quarterDayStr[0] = rMain.getString(R.string.predawn);
+        quarterDayStr[1] = rMain.getString(R.string.morning);
+        quarterDayStr[2] = rMain.getString(R.string.afternoon);
+        quarterDayStr[3] = rMain.getString(R.string.evening);
 
     }// public NavModel()
 
@@ -430,19 +437,20 @@ public class NavModel {
     }// public void reDrawMonth(int getMonth)
 
 
-
-
     public void showMonth(int getMonth){
         dateInfo.setText(NavModel.fullMonthStr[getMonth]+ " " + String.valueOf(currentYear));
+        listInfo.setText("Month View");
+
     }//public void showMonth()
 
     public void showWeek(int getWeek){
         currentWeek = getWeek;
 
-        dateInfo.setText("Week " + String.valueOf(currentWeek));
-
         navMonthCalendar.set(Calendar.WEEK_OF_YEAR, currentWeek);
         navMonthCalendar.set(Calendar.YEAR, currentYear);
+
+        dateInfo.setText(NavModel.fullMonthStr[currentMonth]+ " " + String.valueOf(currentYear));
+        listInfo.setText("Week " + String.valueOf(currentWeek));
 
     }//public void showWeek()
 
@@ -458,7 +466,8 @@ public class NavModel {
         sMonth = NavModel.fullMonthStr[currentMonth];
         sDate = String.valueOf(currentDate);
 
-        dateInfo.setText(sMonth+" "+sDate+", "+sYear);
+        dateInfo.setText(NavModel.fullMonthStr[currentMonth]+ " " + String.valueOf(currentYear));
+        listInfo.setText(sMonth+" "+sDate+", "+sYear);
 
     }//public void showWeek()
 

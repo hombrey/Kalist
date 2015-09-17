@@ -1,6 +1,5 @@
 package com.archbrey.Kalist;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -20,18 +19,8 @@ public class EventItem {
     private static final SimpleDateFormat YearF = new SimpleDateFormat("yyyy");
     private static final SimpleDateFormat WeekF = new SimpleDateFormat("w");
     private static final SimpleDateFormat HourF = new SimpleDateFormat("HH");
-    private static final SimpleDateFormat MinuteF = new SimpleDateFormat("MM");
+    private static final SimpleDateFormat MinuteF = new SimpleDateFormat("mm");
 
-    public EventItem(){
-
-        StartDate = new GregorianCalendar();
-        StopDate = new GregorianCalendar();
-
-    } //public EventItem()
-
-    public EventItem(String getID){
-        Title = getID;
-    } //
 
     public EventItem(String getID, String getTitle, String getDescription, String getStart, String getStop){
 
@@ -54,6 +43,7 @@ public class EventItem {
 
     } //public EventItem()
 
+    /*
     public Integer Year(boolean isGetStart){
 
         Integer extractYear;
@@ -66,7 +56,7 @@ public class EventItem {
 
         return extractYear;
     } //public Integer Month()
-
+    */
 
     public Integer Month(boolean isGetStart){
 
@@ -146,17 +136,34 @@ public class EventItem {
         return extractHour;
     } //public Integer Hour()
 
-    public Integer Minute(boolean isGetStart){
+    public Integer quarterDay (boolean isGetStart){
 
-        Integer extractMinute;
+        Integer timeCategory;
+        Integer intHour;
+
+        if (isGetStart) intHour = Integer.valueOf(HourF.format(StartDate.getTime()));
+        else intHour = Integer.valueOf(HourF.format(StopDate.getTime()));
+
+        if (intHour<6) timeCategory = 0;
+        else if (intHour<12) timeCategory = 1;
+        else if (intHour<18) timeCategory = 2;
+        else timeCategory = 3;
+
+        return timeCategory;
+    } //public Integer Hour()
+
+
+    public String Minute(boolean isGetStart){
+
+        String extractMinute;
         String dateString;
 
         if (isGetStart) dateString = MinuteF.format(StartDate.getTime());
         else dateString = MinuteF.format(StopDate.getTime());
 
-        extractMinute = Integer.valueOf(dateString);
+      //  extractMinute = Integer.valueOf(dateString);
 
-        return extractMinute;
+        return dateString;
     } //public Integer Hour()
 
 

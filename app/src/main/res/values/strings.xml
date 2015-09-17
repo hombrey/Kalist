@@ -47,4 +47,9 @@
     <string name="fullNovStr">November</string>
     <string name="fullDecStr">December</string>
 
+    <string name="predawn">Pre Dawn</string>
+    <string name="morning">Morning</string>
+    <string name="afternoon">Afternoon</string>
+    <string name="evening">Evening</string>
+
 </resources>

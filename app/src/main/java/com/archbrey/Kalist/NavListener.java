@@ -112,21 +112,24 @@ public class NavListener {
                 CalActivity.navHandle.reDrawMonth(NavID);
                 //CalActivity.listHandle.drawMonthList();
                 CalActivity.listHandle.drawList("Month");
-                NavModel.listInfo.setText("Month View");
+
                 break;
+
             case WEEKMODE:
 
                 CalActivity.navHandle.showWeek(NavID);
                 CalActivity.listHandle.listWeek();
-                NavModel.listInfo.setText("Week View");
                 break;
+
             case DATEMODE:
                 CalActivity.navHandle.showDate(NavID);
-                CalActivity.listHandle.listDate();
-                NavModel.listInfo.setText("Day View");
+                //CalActivity.listHandle.listDate();
+                CalActivity.listHandle.drawList("Day");
                 break;
+
             case YEARMODE:
                 NavModel.yearHolder.setText("<- " + String.valueOf(NavModel.currentYear + NavID) + " ->");
+                NavModel.listInfo.setText("updating list...");
                 break;
             default:
                 break;
