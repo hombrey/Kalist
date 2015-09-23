@@ -33,8 +33,8 @@ public class ListModel {
 
     private static LinearLayout listLayout;
 
-    private static TextView[] MonthLabel;
-    private static TextView[] DayofWeekLabel;
+    //private static TextView[] MonthLabel;
+    //private static TextView[] DayofWeekLabel;
 
     private static ArrayList<TextView> TextViewList;
 
@@ -75,6 +75,7 @@ public ListModel(){
             LinearLayout.LayoutParams.WRAP_CONTENT);  //height
     subGroupParams.gravity=Gravity.TOP;
 
+    /*
     MonthLabel = new TextView[12];
     for (int monthInc=0; monthInc<=11; monthInc++) {
         MonthLabel[monthInc] = new TextView (mainContext);
@@ -86,7 +87,7 @@ public ListModel(){
         MonthLabel[weekInc] = new TextView (mainContext);
         MonthLabel[weekInc].setText(NavModel.dayofWeek[weekInc]);
     } // for (int weekInc=1; weekInc<=7; weekInc++)
-
+    */
 
     TextViewList = new ArrayList<>();
   //  EventViewText = new ArrayList<>();
@@ -189,12 +190,13 @@ public ListModel(){
                 } //if (listType.equals("Year"))
 
 
-                if (listType.equals("Day")) {
+                if (listType.equals("Day")||listType.equals("Week")) {
                     if (eventArrayList.get(arrayListIndex).StartDate.before(lookupStart))
                     {testDate = -2; arrayListIndex++; incSocket--; } //discard events that began outside the scope. The list does not work with them
                     else testDate = eventArrayList.get(arrayListIndex).Hour(true);
 
-                } //if (listType.equals("Day"))
+                } //(listType.equals("Day")||listType.equals("Week"))
+
 
             } //if (arrayListIndex<eventArrayList.size())
             else {
@@ -208,7 +210,7 @@ public ListModel(){
 
                 if (listType.equals("Month")) {
 
-                    Integer eventWeek = eventArrayList.get(arrayListIndex).Week(true) ;
+                    Integer eventWeek = eventArrayList.get(arrayListIndex).Week(true);
                     if (ViewCount == -1)
                         addGroupHeaderView("Week " + String.valueOf(eventWeek), ++ViewCount);
                     else if (arrayListIndex > 0) //check to add to group header only if actual events have been added to the list
@@ -220,7 +222,7 @@ public ListModel(){
 
                 if (listType.equals("Year")) {
 
-                    Integer eventMonth = eventArrayList.get(arrayListIndex).Month(true) ;
+                    Integer eventMonth = eventArrayList.get(arrayListIndex).Month(true);
                     if (ViewCount == -1)
                         addGroupHeaderView( NavModel.fullMonthStr[eventMonth -1] , ++ViewCount);
                     else if (arrayListIndex > 0) //check to add to group header only if actual events have been added to the list
@@ -258,7 +260,7 @@ public ListModel(){
                 //fill up sub event Text using the first item that matches the time increment socket
                 SubGroupText.add(new TextView(mainContext));
 
-                String subGroupLabel = " ";
+                String subGroupLabel;
 
                 if (listType.equals("Month")){
                     subGroupLabel = String.valueOf(eventArrayList.get(arrayListIndex).dayOfMonth(true)) + "|" +
@@ -273,10 +275,6 @@ public ListModel(){
                     SubGroupText.get(SubViewCount).setText(subGroupLabel);
                     SubEventView.get(SubViewCount)[0].addView(SubGroupText.get(SubViewCount), eventParams);
                     EventView.get(ViewCount).addView(SubEventView.get(SubViewCount)[0], subGroupParams);
-                } //if (listType.equals("Month"))
-
-                if (listType.equals("Day")){
-                    //subGroupLabel ="    " + String.valueOf(eventArrayList.get(arrayListIndex).Hour(true));
                 } //if (listType.equals("Month"))
 
                 int SubEventListCount = -1;
@@ -295,7 +293,7 @@ public ListModel(){
                             SubEventList.get(SubViewCount).add(new TextView(mainContext)); SubEventListCount++;
 
                             SubEventList.get(SubViewCount).get(SubEventListCount).setText(""); //use this so the rest of the text can just be appended
-                            if (listType.equals("Day")) SubEventList.get(SubViewCount).get(SubEventListCount).append(eventArrayList.get(arrayListIndex).Hour(true) + ":" + eventArrayList.get(arrayListIndex).Minute(true) +" " );
+                            if (listType.equals("Day")||listType.equals("Week")) SubEventList.get(SubViewCount).get(SubEventListCount).append(eventArrayList.get(arrayListIndex).Hour(true) + ":" + eventArrayList.get(arrayListIndex).Minute(true) +" " );
                             SubEventList.get(SubViewCount).get(SubEventListCount).append( eventArrayList.get(arrayListIndex).Title );
 
                             SubEventView.get(SubViewCount)[1].addView(SubEventList.get(SubViewCount).get(SubEventListCount), eventParams);
@@ -321,6 +319,52 @@ public ListModel(){
     }//public void drawList(String listType)
 
 
+    public void listWeek() {
+
+        lookupStart.set(Calendar.DAY_OF_WEEK, 1);
+        lookupStart.set(Calendar.WEEK_OF_YEAR, NavModel.currentWeek);
+        lookupStart.set(Calendar.YEAR, NavModel.currentYear);
+
+        lookupStop.set(Calendar.DAY_OF_WEEK, 1);
+        lookupStop.set(Calendar.WEEK_OF_YEAR, NavModel.currentWeek + 1);
+        lookupStop.set(Calendar.YEAR, NavModel.currentYear);
+
+        fetchList();
+        Collections.sort(eventArrayList, new CalStartCompare());
+
+        listBox.removeAllViews();
+        listLayout.removeAllViews();
+        TextViewList.clear();
+
+        listBox.removeAllViews(); //remove contents of layout
+        EventHeaderText.clear(); // remove contents of Text view list
+        EventView.clear();
+
+        int ViewCount = -1;
+        for (int inc = 0; inc < eventArrayList.size(); inc++)
+        {
+            String dayOfWeek = eventArrayList.get(inc).dayOfWeek(true) + " (" +
+                                String.valueOf(eventArrayList.get(inc).Month(true)) + "/" +
+                                String.valueOf(eventArrayList.get(inc).dayOfMonth(true)) + ")" ;
+
+            if (ViewCount == -1)
+                addGroupHeaderView(dayOfWeek, ++ViewCount);
+            else if (inc > 0) //check to add to group header only if actual events have been added to the list
+                 if (!dayOfWeek.equals(eventArrayList.get(inc - 1).dayOfWeek(true)))
+                addGroupHeaderView(dayOfWeek, ++ViewCount);
+
+            TextViewList.add(new TextView(mainContext));
+            TextViewList.get(inc).setGravity(Gravity.START);
+            TextViewList.get(inc).setText("   " + eventArrayList.get(inc).Hour(true) + ":" + eventArrayList.get(inc).Minute(true) +" " +
+                    eventArrayList.get(inc).Title );
+
+            listLayout.addView(TextViewList.get(inc), eventParams);
+        }
+
+        listBox.addView(listLayout, eventParams);
+
+    } //public void listWeek()
+
     private void addGroupHeaderView(String GroupHeader,int ViewCount){
 
         EventView.add(new LinearLayout(mainContext));
@@ -337,31 +381,6 @@ public ListModel(){
     } //private void addWeekView()
 
 
-    public void listWeek() {
-
-        lookupStart.set(Calendar.DAY_OF_WEEK, 1);
-        lookupStart.set(Calendar.WEEK_OF_YEAR, NavModel.currentWeek);
-        lookupStart.set(Calendar.YEAR, NavModel.currentYear);
-
-        lookupStop.set(Calendar.DAY_OF_WEEK, 1);
-        lookupStop.set(Calendar.WEEK_OF_YEAR, NavModel.currentWeek + 1);
-        lookupStop.set(Calendar.YEAR, NavModel.currentYear);
-
-        fetchList();
-        updateBox();
-
-    } //public void listWeek()
-
-
-    public void listDate() {
-
-        lookupStart.set(NavModel.currentYear, NavModel.currentMonth, NavModel.currentDate, 0, 0);
-        lookupStop.set(NavModel.currentYear, NavModel.currentMonth, NavModel.currentDate+1, 0,0);
-
-        fetchList();
-        updateBox();
-
-    } //public void listWeek()
 
     private void fetchList(){
 
@@ -400,33 +419,6 @@ public ListModel(){
         cursor.close();
 
     } //private void fetchList()
-
-
-    public void updateBox(){
-
-        listBox.removeAllViews();
-        listLayout.removeAllViews();
-        TextViewList.clear();
-
-        for (int inc = 0; inc < eventArrayList.size(); inc++)
-        {
-
-            TextViewList.add(new TextView(mainContext));
-            TextViewList.get(inc).setTextColor(SettingsActivity.textColor);
-            TextViewList.get(inc).setGravity(Gravity.START);
-            TextViewList.get(inc).setText(eventArrayList.get(inc).Title + " " +
-                    String.valueOf(eventArrayList.get(inc).Month(true)) + "/" +
-                    String.valueOf(eventArrayList.get(inc).dayOfMonth(true)) +
-                    "\n");
-
-            listLayout.addView(TextViewList.get(inc), eventParams);
-        }
-
-        listBox.addView(listLayout,eventParams);
-
-    } //public void updateBox()
-
-
 
 
 

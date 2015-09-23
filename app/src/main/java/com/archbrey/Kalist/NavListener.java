@@ -119,11 +119,11 @@ public class NavListener {
 
                 CalActivity.navHandle.showWeek(NavID);
                 CalActivity.listHandle.listWeek();
+               // CalActivity.listHandle.drawList("Week");
                 break;
 
             case DATEMODE:
                 CalActivity.navHandle.showDate(NavID);
-                //CalActivity.listHandle.listDate();
                 CalActivity.listHandle.drawList("Day");
                 break;
 
